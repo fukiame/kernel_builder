@@ -32,6 +32,7 @@ pack() {
 # build
 for toolchain in $1; do
   #rm -rf out
+  if [ ! -d out ]; then mkdir out; fi
 
   bash -x "${outside}/toolchains/${toolchain}.sh" setup
 

@@ -22,6 +22,7 @@ pack() {
   cd "${maindir}/out/arch/arm64/boot/dts"
   ./dtbtool -v -s 2048 -o dt.img
   cp -af "${out_dt}" "${zipper}/dt.img"
+  cd "${zipper}"
   if [ -e ${maindir}/banner_append ]; then
     cat ${maindir}/banner_append >> ${zipper}/banner
   fi

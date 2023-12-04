@@ -20,7 +20,7 @@ on: # [push]
       KREPO:
         description: 'kernel repo'
         required: true
-        default: 'TelegramAt25/android_kernel_xiaomi_selene'
+        default: 'TelegramAt25/kernel_oppo_msm8939'
       KBRANCH:
         description: 'kernel branch'
         required: true

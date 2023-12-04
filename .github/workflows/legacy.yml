@@ -16,7 +16,7 @@ on: # [push]
       COMPILER:
         description: 'compilers used'
         required: true
-        default: 'Proton-Clang'
+        default: 'AOSP-GCC'
       KREPO:
         description: 'kernel repo'
         required: true
@@ -49,10 +49,6 @@ on: # [push]
         description: 'idk'
         required: false
         default: ''
-      CONTAINER:
-        description: 'if you know you know'
-        required: true
-        default: 'debian:buster'
 
 env:
   BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
@@ -71,8 +67,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: ${{ github.event.inputs.CONTAINER }}
 
     steps:
         - name: checkout
@@ -94,7 +88,7 @@ jobs:
               libssl-dev openssl python3 python2 zip zstd make clang gcc-arm-linux-gnueabi \
               software-properties-common device-tree-compiler libxml2 libarchive-tools \
               perl libelf-dev libssl-dev libtfm-dev wget xz-utils -y
-            ln -sf "/usr/bin/python3" /usr/bin/python
+            ln -sf "/usr/bin/python2" /usr/bin/python
         - name: show host info
           run: |
             bash tg_utils.sh msg "gh $RUN_NUM: build env initialized%nlgh $RUN_NUM: host: $(cat /etc/os-release | grep PRETTY_NAME | cut -d'=' -f2)%nlgh $RUN_NUM: free disk space: $(df --sync -BM --output=avail / | grep -v Avail)"

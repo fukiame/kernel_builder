@@ -18,8 +18,10 @@ pack() {
     git reset --hard origin/${zipper_branch}
   fi
   cp -af "${out_image}" "${zipper}"
-  cp -af "${out_dtb}" "${zipper}/dtb"
-  cp -af "${out_dtbo}" "${zipper}/dtbo.img"
+  cc "${zipper}/dtbtool.c" -o "${maindir}/out/arch/arm64/boot/dts/dtbtool"
+  cd "${maindir}/out/arch/arm64/boot/dts"
+  ./dtbtool -v -s 2048 -o dt.img
+  cp -af "${out_dt}" "${zipper}/dt.img"
   if [ -e ${maindir}/banner_append ]; then
     cat ${maindir}/banner_append >> ${zipper}/banner
   fi

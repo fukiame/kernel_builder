@@ -12,18 +12,17 @@ export SUBARCH="arm64"
 export KBUILD_BUILD_USER="nijuugo-ji"
 export KBUILD_BUILD_HOST="telegram-de"
 
-export defconfig="selene_defconfig"
+export defconfig="lineageos_a37f_defconfig"
 
 if [[ -z "$zipper_repo" ]]; then
-  export zipper_repo=fukiame/AnyKernel3-niigo
+  export zipper_repo=fukiame/a37f_ak3
 fi
 if [[ -z "$zipper_branch" ]]; then
-  export zipper_branch=yuki
+  export zipper_branch=blank
 fi
 
-export out_image="${maindir}/out/arch/${ARCH}/boot/Image.gz-dtb"
-export out_dtb="${maindir}/out/arch/${ARCH}/boot/dts/mediatek/mt6768.dtb"
-export out_dtbo="${maindir}/out/arch/${ARCH}/boot/dtbo.img"
+export out_image="${maindir}/out/arch/${ARCH}/boot/Image"
+export out_dt="${maindir}/out/arch/${ARCH}/boot/dts/dt.img"
 
 export zipper="${outside}/zipper"
 

@@ -25,6 +25,6 @@ case $1 in
       CONFIG_NO_ERROR_ON_MISMATCH=y \
       CONFIG_DEBUG_SECTION_MISMATCH=y \
       2>&1 | tee ${CUR_TOOLCHAIN}.log
-    sh ${outside}/ver_toolchain.sh aarch64-linux-android-gcc aarch64-linux-android-ld > ${CUR_TOOLCHAIN}.info
+    sh ${outside}/ver_toolchain.sh aarch64-linux-android-gcc > ${CUR_TOOLCHAIN}.info
   ;;
 esac

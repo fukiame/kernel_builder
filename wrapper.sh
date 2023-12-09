@@ -2,6 +2,8 @@
 #
 # wrapper providing almost the same amount of verbosity as the main github actions workflow
 
+source ./priv_env
+
 RUN_ID=$(shuf -ern8 {A..Z} {a..z} {0..9} | tr -d '\n')
 RUN_START=$(date +"%s")
 #ALT_RECIPENT=$1
@@ -19,8 +21,8 @@ if [ ! -z "$VERBOSE" ]; then
 fi
 
 if [ ! -d kernel ]; then
-  git clone https://github.com/${kernel_repo} -b ${kernel_branch} kernel
-  cd kernel || exit 1
+  git clone https://github.com/${kernel_repo} -b ${kernel_branch} kernel || exit 1
+  cd kernel
 else
   cd kernel || exit 1
   git reset --hard

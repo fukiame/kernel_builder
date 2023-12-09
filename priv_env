@@ -19,3 +19,6 @@ PATCH_KSU=""
 # the compiler(s) to use
 # those are the name of the scripts in ./toolchains, without ".sh"
 COMPILERS="Neutron-Clang-17"
+
+# additional verbose info
+#VERBOSE=yes

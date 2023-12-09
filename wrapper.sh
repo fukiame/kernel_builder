@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+#
+# wrapper providing almost the same amount of verbosity as the main github actions workflow
+
+RUN_ID=$(shuf -ern8 {A..Z} {a..z} {0..9} | tr -d '\n')
+RUN_START=$(date +"%s")
+#ALT_RECIPENT=$1
+#if [ ! -z $ALT_RECIPENT ]; then
+#  CHAT_ID="$ALT_RECIPENT"
+#fi
+bash tg_utils.sh msg "$RUN_ID: run started"
+
+if [ ! -z "$NOTE" ]; then
+  bash tg_utils.sh msg "$NOTE"
+fi
+if [ ! -z "$VERBOSE" ]; then
+  bash tg_utils.sh msg "host: $(cat /etc/os-release | grep PRETTY_NAME | cut -d'=' -f2)%nlfree disk space: $(df --sync -BM --output=avail / | grep -v Avail)"
+  bash tg_utils.sh msg "cloning kernel source%nlrepo: $kernel_repo%nlbranch: $kernel_branch"
+fi
+
+if [ ! -d kernel ]; then
+  git clone https://github.com/${kernel_repo} -b ${kernel_branch} kernel
+  cd kernel || exit 1
+else
+  cd kernel || exit 1
+  git reset --hard
+  git checkout ${kernel_branch}
+  git fetch origin ${kernel_branch}
+  git reset --hard origin/${kernel_branch}
+fi
+
+source ../env
+bash ../tg_utils.sh msg "kernel name: ${kernel_name}\
+kernel ver: ${kernel_ver}\
+kernel head commit: ${kernel_head}\
+defconfig: ${defconfig}"
+
+case $PATCH_KSU in
+  "both" )
+    bash ../tg_utils.sh msg "running compilation script(s): $COMPILERS"
+    bash ../build.sh "$COMPILERS"
+    bash ../tg_utils.sh msg "KernelSU patching enabled, patching"
+    bash ../ksu/applyPatches.sh
+    bash ../tg_utils.sh msg "running compilation script(s): $COMPILERS"
+    bash ../build.sh "$COMPILERS"
+  ;;
+  "" )
+    bash ../tg_utils.sh msg "running compilation script(s): $COMPILERS"
+    bash ../build.sh "$COMPILERS"
+  ;;
+  * )
+    bash ../tg_utils.sh msg "KernelSU patching enabled, patching"
+    bash ../ksu/applyPatches.sh
+    bash ../tg_utils.sh msg "running compilation script(s): $COMPILERS"
+    bash ../build.sh "$COMPILERS"
+  ;;
+esac
+
+if [[ $(ls *.zip) ]]; then
+  for file in *.zip ; do
+    bash ../tg_utils.sh up "${file}" "$(cat "${file}.info")"
+    RES=1
+  done
+fi
+if [[ $(ls *.log) ]]; then
+  for file in *.log ; do
+    if [ -e "${file}.info" ]; then
+      bash ../tg_utils.sh up "${file}" "$(cat "${file}.info")"
+      RES=0
+    fi
+  done
+fi
+
+RUN_END=$(date +"%s")
+WDIFF=$((RUN_END - RUN_START))
+[ "$RES"=="0" ] && bash tg_utils.sh msg "$RUN_ID: run failed in $((WDIFF / 60))m, $((WDIFF % 60))s" || bash tg_utils.sh msg "$RUN_ID: run ended in $((WDIFF / 60))m, $((WDIFF % 60))s"

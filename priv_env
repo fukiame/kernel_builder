@@ -1,0 +1,21 @@
+# your telegram bot token
+BOT_TOKEN="hdoznfidvyfnfischsizbiajefb"
+
+# your telegram chatroom's id
+# in bot api
+CHAT_ID="72769420"
+
+# your kernel's github repo, without the https://github.com/, just the part after that
+kernel_repo="TelegramAt25/yuki_kernel_xiaomi_selene"
+
+# the branch you want to use in the repo above
+kernel_branch="niigo"
+
+# whether you want ksu patched in at build time or not
+# leave blank for "no", "both" for both ksu and non ksu, anything else for "yes"
+# require the patches for that version+patchlevel to be in ./ksu/patches
+PATCH_KSU=""
+
+# the compiler(s) to use
+# those are the name of the scripts in ./toolchains, without ".sh"
+COMPILERS="Neutron-Clang-17"

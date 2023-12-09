@@ -32,10 +32,7 @@ else
 fi
 
 source ../env
-bash ../tg_utils.sh msg "kernel name: ${kernel_name}\
-kernel ver: ${kernel_ver}\
-kernel head commit: ${kernel_head}\
-defconfig: ${defconfig}"
+bash ../tg_utils.sh msg "kernel name: ${kernel_name}%nlkernel ver: ${kernel_ver}%nlkernel head commit: ${kernel_head}%nldefconfig: ${defconfig}"
 
 case $PATCH_KSU in
   "both" )
@@ -75,4 +72,4 @@ fi
 
 RUN_END=$(date +"%s")
 WDIFF=$((RUN_END - RUN_START))
-[ "$RES"=="0" ] && bash tg_utils.sh msg "$RUN_ID: run failed in $((WDIFF / 60))m, $((WDIFF % 60))s" || bash tg_utils.sh msg "$RUN_ID: run ended in $((WDIFF / 60))m, $((WDIFF % 60))s"
+[ "$RES"=="0" ] && bash ../tg_utils.sh msg "$RUN_ID: run failed in $((WDIFF / 60))m, $((WDIFF % 60))s" || bash ../tg_utils.sh msg "$RUN_ID: run ended in $((WDIFF / 60))m, $((WDIFF % 60))s"

@@ -55,12 +55,6 @@ case $PATCH_KSU in
   ;;
 esac
 
-if [[ $(ls *.zip) ]]; then
-  for file in *.zip ; do
-    bash ../tg_utils.sh up "${file}" "$(cat "${file}.info")"
-    RES=1
-  done
-fi
 if [[ $(ls *.log) ]]; then
   for file in *.log ; do
     if [ -e "${file}.info" ]; then
@@ -69,6 +63,14 @@ if [[ $(ls *.log) ]]; then
     fi
   done
 fi
+if [[ $(ls *.zip) ]]; then
+  for file in *.zip ; do
+    bash ../tg_utils.sh up "${file}" "$(cat "${file}.info")"
+    RES=1
+  done
+fi
+
+rm *.zip
 
 RUN_END=$(date +"%s")
 WDIFF=$((RUN_END - RUN_START))

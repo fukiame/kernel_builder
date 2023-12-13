@@ -39,7 +39,7 @@ case $PATCH_KSU in
     bash ../tg_utils.sh msg "running compilation script(s): $COMPILERS"
     bash ../build.sh "$COMPILERS"
     bash ../tg_utils.sh msg "KernelSU patching enabled, patching"
-    bash ../ksu/applyPatches.sh
+    bash ../ksu/applyPatches.sh || exit 1
     bash ../tg_utils.sh msg "running compilation script(s): $COMPILERS"
     bash ../build.sh "$COMPILERS"
   ;;
@@ -49,7 +49,7 @@ case $PATCH_KSU in
   ;;
   * )
     bash ../tg_utils.sh msg "KernelSU patching enabled, patching"
-    bash ../ksu/applyPatches.sh
+    bash ../ksu/applyPatches.sh || exit 1
     bash ../tg_utils.sh msg "running compilation script(s): $COMPILERS"
     bash ../build.sh "$COMPILERS"
   ;;
@@ -59,14 +59,14 @@ if [[ $(ls *.log) ]]; then
   for file in *.log ; do
     if [ -e "${file}.info" ]; then
       bash ../tg_utils.sh up "${file}" "$(cat "${file}.info")"
-      RES=0
+      export RES=0
     fi
   done
 fi
 if [[ $(ls *.zip) ]]; then
   for file in *.zip ; do
     bash ../tg_utils.sh up "${file}" "$(cat "${file}.info")"
-    RES=1
+    export RES=1
   done
 fi
 

@@ -13,7 +13,7 @@ KSU_ver=$(($KSU_git_ver + 10000 + 200))
 
 patchesdir="$outside/ksu/patches/$(echo $kernel_ver | cut -d. -f1,2)"
 if [[ -d "$patchesdir" ]]; then
-  git am "$patchesdir/*.patch"
+  git am "$patchesdir/*.patch" || exit 1
 else
   echo "patching ksu failed, the kernel version you want to patch doesnt have patches here yet"
   exit 1

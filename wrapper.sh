@@ -70,7 +70,7 @@ if [[ $(ls *.zip) ]]; then
   done
 fi
 
-rm *.zip
+rm *.zip*
 
 RUN_END=$(date +"%s")
 WDIFF=$((RUN_END - RUN_START))

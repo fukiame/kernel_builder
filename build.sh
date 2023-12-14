@@ -24,6 +24,7 @@ pack() {
     cat ${maindir}/banner_append >> ${zipper}/banner
   fi
   zip -r9 "$1" ./* -x .git README.md ./*placeholder
+  rm ${maindir}/banner_append
   cd "${maindir}"
 }
 

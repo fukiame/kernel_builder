@@ -4,7 +4,7 @@
 
 source ./priv_env
 
-RUN_ID=$(shuf -ern8 {a..z} {0..9} | tr -d '\n')
+RUN_ID=$(shuf -ern4 {0..9} | sha1sum - | head -c 8)
 RUN_START=$(date +"%s")
 #ALT_RECIPENT=$1
 #if [ ! -z $ALT_RECIPENT ]; then

@@ -37,7 +37,7 @@ for toolchain in $1; do
   BUILD_START=$(date +"%s")
   export CUR_TOOLCHAIN="${toolchain}"
 
-  bash -x "${outside}/toolchains/${toolchain}.sh" build ${defconfig}
+  bash -x "${outside}/toolchains/${toolchain}.sh" build ${defconfig} || exit 1
 
   if [ -e "${out_image}" ]; then
     BUILD_END=$(date +"%s")

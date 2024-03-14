@@ -20,11 +20,11 @@ on: # [push]
       KREPO:
         description: 'kernel repo'
         required: true
-        default: 'TelegramAt25/yuki_kernel_xiaomi_selene'
+        default: 'Kentanglu/Sea_Kernel-Selene'
       KBRANCH:
         description: 'kernel branch'
         required: true
-        default: 'niigo'
+        default: 'sea-release'
       NOTES:
         description: 'notes to print out'
         required: false

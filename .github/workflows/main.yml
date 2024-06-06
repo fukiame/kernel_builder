@@ -16,15 +16,15 @@ on: # [push]
       COMPILER:
         description: 'compilers used'
         required: true
-        default: 'Lilium-Clang'
+        default: 'Geopelia-Clang'
       KREPO:
         description: 'kernel repo'
         required: true
-        default: 'https://github.com/TelegramAt25/niigo_kernel_xiaomi_blossom'
+        default: 'https://github.com/25ji-Telegram-de/android_kernel_xiaomi_selene'
       KBRANCH:
         description: 'kernel branch'
         required: true
-        default: 'enanan'
+        default: 'lumi'
       NOTES:
         description: 'notes to print out'
         required: false

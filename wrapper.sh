@@ -21,7 +21,7 @@ if [ ! -z "$VERBOSE" ]; then
 fi
 
 if [ ! -d kernel ]; then
-  git clone https://github.com/${kernel_repo} -b ${kernel_branch} kernel || exit 1
+  git clone ${kernel_repo} -b ${kernel_branch} kernel || exit 1
   cd kernel
 else
   cd kernel || exit 1

@@ -15,7 +15,7 @@ export KBUILD_BUILD_HOST="telegram-de"
 export defconfig="selene_defconfig"
 
 if [[ -z "$zipper_repo" ]]; then
-  export zipper_repo=fukiame/AnyKernel3-niigo
+  export zipper_repo="https://github.com/fukiame/AnyKernel3-niigo"
 fi
 if [[ -z "$zipper_branch" ]]; then
   export zipper_branch=yuki

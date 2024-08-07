@@ -6,7 +6,7 @@ export BOT_TOKEN="hdoznfidvyfnfischsizbiajefb"
 export CHAT_ID="72769420"
 
 # your kernel's github repo, without the https://github.com/, just the part after that
-kernel_repo="TelegramAt25/yuki_kernel_xiaomi_selene"
+kernel_repo="https://github.com/TelegramAt25/yuki_kernel_xiaomi_selene"
 
 # the branch you want to use in the repo above
 kernel_branch="niigo"

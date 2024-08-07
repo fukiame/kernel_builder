@@ -1,0 +1,37 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: backslashxx <118538522+backslashxx@users.noreply.github.com>
+Date: Sat, 9 Mar 2024 14:02:17 +0800
+Subject: [PATCH] fs: suspicious: pick in backslashxx's antidetection changes
+
+unhide TWRP folder
+- hiding this causes issues as any non-root filemanager cannot see that folder.
+- can cause shit like "hurr durr this kernel deleted muh TWRP backups"
+
+hide mounted /system/etc/hosts
+- for adblocking purposes with either bindhosts or systemless-hosts-KSU
+- currently not being used as a detection method, so this is actually pre-emptive.
+
+Signed-off-by: hani <itshanibee@gmail.com>
+
+diff --git a/fs/suspicious.c b/fs/suspicious.c
+index dbbc5fff7177..b0906fdb762e 100644
+--- a/fs/suspicious.c
++++ b/fs/suspicious.c
+@@ -13,7 +13,6 @@
+ #define uid_matches() (getuid() >= 2000)
+ 
+ static const char* const suspicious_paths[] = {
+-	"/storage/emulated/0/TWRP",
+ 	"/system/lib/libzygisk.so",
+ 	"/system/lib64/libzygisk.so",
+ 	"/dev/zygisk",
+@@ -32,7 +31,8 @@ static const char* suspicious_mount_paths[] = {
+ 	"/apex/com.android.art/bin/dex2oat",
+ 	"/system/apex/com.android.art/bin/dex2oat",
+ 	"/system/etc/preloaded-classes",
+-	"/dev/zygisk"
++	"/dev/zygisk",
++	"/system/etc/hosts"
+ };
+ 
+ static uid_t getuid(void) {

@@ -1,11 +1,8 @@
-From 39edc16fc6b58ac6b5a53d24c040f2b58555237e Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: fukiame <fukiame@proton.me>
 Date: Tue, 29 Aug 2023 21:31:22 +0700
-Subject: [PATCH 3/5] fs/read_write: add ksu vfs_read hook
+Subject: [PATCH] fs/read_write: add ksu vfs_read hook
 
----
- fs/read_write.c | 7 +++++++
- 1 file changed, 7 insertions(+)
 
 diff --git a/fs/read_write.c b/fs/read_write.c
 index 0da6e4f19d7f..a05e05302930 100644
@@ -27,6 +24,3 @@ index 0da6e4f19d7f..a05e05302930 100644
  	ssize_t ret;
  
  	if (!(file->f_mode & FMODE_READ))
--- 
-2.34.1
-

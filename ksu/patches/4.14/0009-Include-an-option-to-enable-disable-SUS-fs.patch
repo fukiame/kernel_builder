@@ -1,0 +1,356 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: chiteroman <98092901+chiteroman@users.noreply.github.com>
+Date: Sun, 14 Apr 2024 18:48:10 +0200
+Subject: [PATCH] Include an option to enable/disable SUS-fs
+
+
+diff --git a/fs/Kconfig b/fs/Kconfig
+index 83d8bf55145c..0b435017afa6 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -4,6 +4,11 @@
+ 
+ menu "File systems"
+ 
++config SUS_FS
++	bool "SUS fs"
++	depends on KSU
++	default y if KSU=y
++
+ # Use unaligned word dcache accesses
+ config DCACHE_WORD_ACCESS
+        bool
+diff --git a/fs/Makefile b/fs/Makefile
+index 8e475111d9fb..a60b9c2b6283 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -13,8 +13,9 @@ obj-y :=	open.o read_write.o file_table.o super.o \
+ 		attr.o bad_inode.o file.o filesystems.o namespace.o \
+ 		seq_file.o xattr.o libfs.o fs-writeback.o \
+ 		pnode.o splice.o sync.o utimes.o \
+-		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
+-		suspicious.o
++		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o
++
++obj-$(CONFIG_SUS_FS) += suspicious.o
+ 
+ ifeq ($(CONFIG_BLOCK),y)
+ obj-y +=	buffer.o block_dev.o direct-io.o mpage.o
+diff --git a/fs/namei.c b/fs/namei.c
+index 5f4c9b5111a3..62585822d624 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -39,7 +39,9 @@
+ #include <linux/bitops.h>
+ #include <linux/init_task.h>
+ #include <linux/uaccess.h>
++#if defined(CONFIG_SUS_FS)
+ #include <linux/suspicious.h>
++#endif
+ 
+ #include "internal.h"
+ #include "mount.h"
+@@ -3717,9 +3719,11 @@ struct file *do_filp_open(int dfd, struct filename *pathname,
+ 	int flags = op->lookup_flags;
+ 	struct file *filp;
+ 
++#if defined(CONFIG_SUS_FS)
+ 	if (suspicious_path(pathname)) {
+ 		return ERR_PTR(-ENOENT);
+ 	}
++#endif
+ 
+ 	set_nameidata(&nd, dfd, pathname);
+ 	filp = path_openat(&nd, op, flags | LOOKUP_RCU);
+@@ -3913,6 +3917,8 @@ SYSCALL_DEFINE4(mknodat, int, dfd, const char __user *, filename, umode_t, mode,
+ 	struct path path;
+ 	int error;
+ 	unsigned int lookup_flags = 0;
++
++#if defined(CONFIG_SUS_FS)
+ 	struct filename* fname;
+ 	int status;
+ 
+@@ -3923,6 +3929,7 @@ SYSCALL_DEFINE4(mknodat, int, dfd, const char __user *, filename, umode_t, mode,
+ 	if (status) {
+ 		return -ENOENT;
+ 	}
++#endif
+ 
+ 	error = may_mknod(mode);
+ 	if (error)
+@@ -4003,6 +4010,8 @@ SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
+ 	struct path path;
+ 	int error;
+ 	unsigned int lookup_flags = LOOKUP_DIRECTORY;
++
++#if defined(CONFIG_SUS_FS)
+ 	struct filename* fname;
+ 	int status;
+ 
+@@ -4013,6 +4022,8 @@ SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
+ 	if (status) {
+ 		return -ENOENT;
+ 	}
++#endif
++
+ retry:
+ 	dentry = user_path_create(dfd, pathname, &path, lookup_flags);
+ 	if (IS_ERR(dentry))
+@@ -4090,6 +4101,8 @@ static long do_rmdir(int dfd, const char __user *pathname)
+ 	struct qstr last;
+ 	int type;
+ 	unsigned int lookup_flags = 0;
++
++#if defined(CONFIG_SUS_FS)
+ 	struct filename* fname;
+ 	int status;
+ 
+@@ -4100,6 +4113,8 @@ static long do_rmdir(int dfd, const char __user *pathname)
+ 	if (status) {
+ 		return -ENOENT;
+ 	}
++#endif
++
+ retry:
+ 	name = filename_parentat(dfd, getname(pathname), lookup_flags,
+ 				&path, &last, &type);
+@@ -4237,9 +4252,12 @@ static long do_unlinkat(int dfd, const char __user *pathname)
+ 	struct inode *delegated_inode = NULL;
+ 	unsigned int lookup_flags = 0;
+ 
++#if defined(CONFIG_SUS_FS)
+ 	if (suspicious_path(name)) {
+ 		return -ENOENT;
+ 	}
++#endif
++
+ retry:
+ 	name = filename_parentat(dfd, getname(pathname), lookup_flags,
+ 				&path, &last, &type);
+@@ -4353,6 +4371,8 @@ SYSCALL_DEFINE3(symlinkat, const char __user *, oldname,
+ 	struct dentry *dentry;
+ 	struct path path;
+ 	unsigned int lookup_flags = 0;
++
++#if defined(CONFIG_SUS_FS)
+ 	struct filename* fname;
+ 	int status;
+ 
+@@ -4371,6 +4391,7 @@ SYSCALL_DEFINE3(symlinkat, const char __user *, oldname,
+ 	if (status) {
+ 		return -ENOENT;
+ 	}
++#endif
+ 
+ 	from = getname(oldname);
+ 	if (IS_ERR(from))
+@@ -4502,6 +4523,8 @@ SYSCALL_DEFINE5(linkat, int, olddfd, const char __user *, oldname,
+ 	struct inode *delegated_inode = NULL;
+ 	int how = 0;
+ 	int error;
++
++#if defined(CONFIG_SUS_FS)
+ 	struct filename* fname;
+ 	int status;
+ 
+@@ -4520,6 +4543,7 @@ SYSCALL_DEFINE5(linkat, int, olddfd, const char __user *, oldname,
+ 	if (status) {
+ 		return -ENOENT;
+ 	}
++#endif
+ 
+ 	if ((flags & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH)) != 0)
+ 		return -EINVAL;
+@@ -4780,6 +4804,8 @@ SYSCALL_DEFINE5(renameat2, int, olddfd, const char __user *, oldname,
+ 	unsigned int lookup_flags = 0, target_flags = LOOKUP_RENAME_TARGET;
+ 	bool should_retry = false;
+ 	int error;
++
++#if defined(CONFIG_SUS_FS)
+ 	struct filename* fname;
+ 	int status;
+ 
+@@ -4798,6 +4824,7 @@ SYSCALL_DEFINE5(renameat2, int, olddfd, const char __user *, oldname,
+ 	if (status) {
+ 		return -ENOENT;
+ 	}
++#endif
+ 
+ 	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
+ 		return -EINVAL;
+@@ -4820,10 +4847,12 @@ SYSCALL_DEFINE5(renameat2, int, olddfd, const char __user *, oldname,
+ 		goto exit;
+ 	}
+ 
++#if defined(CONFIG_SUS_FS)
+ 	if (suspicious_path(from)) {
+ 		error = -ENOENT;
+ 		goto exit;
+ 	}
++#endif
+ 
+ 	to = filename_parentat(newdfd, getname(newname), lookup_flags,
+ 				&new_path, &new_last, &new_type);
+@@ -4832,10 +4861,12 @@ SYSCALL_DEFINE5(renameat2, int, olddfd, const char __user *, oldname,
+ 		goto exit1;
+ 	}
+ 
++#if defined(CONFIG_SUS_FS)
+ 	if (suspicious_path(to)) {
+ 		error = -ENOENT;
+ 		goto exit;
+ 	}
++#endif
+ 
+ 	error = -EXDEV;
+ 	if (old_path.mnt != new_path.mnt)
+diff --git a/fs/open.c b/fs/open.c
+index b445a06acef0..721fab922bb2 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -31,7 +31,9 @@
+ #include <linux/ima.h>
+ #include <linux/dnotify.h>
+ #include <linux/compat.h>
++#if defined(CONFIG_SUS_FS)
+ #include <linux/suspicious.h>
++#endif
+ 
+ #include "internal.h"
+ 
+@@ -141,6 +143,8 @@ static long do_sys_truncate(const char __user *pathname, loff_t length)
+ 	unsigned int lookup_flags = LOOKUP_FOLLOW;
+ 	struct path path;
+ 	int error;
++
++#if defined(CONFIG_SUS_FS)
+ 	struct filename* fname;
+ 	int status;
+ 
+@@ -151,6 +155,7 @@ static long do_sys_truncate(const char __user *pathname, loff_t length)
+ 	if (status) {
+ 		return -ENOENT;
+ 	}
++#endif
+ 
+ 	if (length < 0)	/* sorry, but loff_t says... */
+ 		return -EINVAL;
+@@ -384,6 +389,12 @@ SYSCALL_DEFINE3(faccessat, int, dfd, const char __user *, filename, int, mode)
+ 	struct vfsmount *mnt;
+ 	int res;
+ 	unsigned int lookup_flags = LOOKUP_FOLLOW;
++
++#ifdef CONFIG_KSU
++	ksu_handle_faccessat(&dfd, &filename, &mode, NULL);
++#endif
++
++#if defined(CONFIG_SUS_FS)
+ 	struct filename* fname;
+ 	int status;
+ 
+@@ -394,6 +405,7 @@ SYSCALL_DEFINE3(faccessat, int, dfd, const char __user *, filename, int, mode)
+ 	if (status) {
+ 		return -ENOENT;
+ 	}
++#endif
+ 
+ #ifdef CONFIG_KSU
+ 	ksu_handle_faccessat(&dfd, &filename, &mode, NULL);
+@@ -496,6 +508,8 @@ SYSCALL_DEFINE1(chdir, const char __user *, filename)
+ 	struct path path;
+ 	int error;
+ 	unsigned int lookup_flags = LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
++
++#if defined(CONFIG_SUS_FS)
+ 	struct filename* fname;
+ 	int status;
+ 
+@@ -506,6 +520,8 @@ SYSCALL_DEFINE1(chdir, const char __user *, filename)
+ 	if (status) {
+ 		return -ENOENT;
+ 	}
++#endif
++
+ retry:
+ 	error = user_path_at(AT_FDCWD, filename, lookup_flags, &path);
+ 	if (error)
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index e4f007b4334b..f0ab6e5b9df0 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -12,7 +12,9 @@
+ #include <linux/security.h>
+ #include <linux/fs_struct.h>
+ #include <linux/sched/task.h>
++#if defined(CONFIG_SUS_FS)
+ #include <linux/suspicious.h>
++#endif
+ 
+ #include "proc/internal.h" /* only for get_proc_task() in ->open() */
+ 
+@@ -103,10 +105,12 @@ static int show_vfsmnt(struct seq_file *m, struct vfsmount *mnt)
+ 	struct super_block *sb = mnt_path.dentry->d_sb;
+ 	int err;
+ 
++#if defined(CONFIG_SUS_FS)
+ 	if (is_suspicious_mount(mnt, &p->root)) {
+ 		err = SEQ_SKIP;
+ 		goto out;
+ 	}
++#endif
+ 
+ 	if (sb->s_op->show_devname) {
+ 		err = sb->s_op->show_devname(m, mnt_path.dentry);
+@@ -144,10 +148,12 @@ static int show_mountinfo(struct seq_file *m, struct vfsmount *mnt)
+ 	struct path mnt_path = { .dentry = mnt->mnt_root, .mnt = mnt };
+ 	int err;
+ 
++#if defined(CONFIG_SUS_FS)
+ 	if (is_suspicious_mount(mnt, &p->root)) {
+ 		err = SEQ_SKIP;
+ 		goto out;
+ 	}
++#endif
+ 
+ 	seq_printf(m, "%i %i %u:%u ", r->mnt_id, r->mnt_parent->mnt_id,
+ 		   MAJOR(sb->s_dev), MINOR(sb->s_dev));
+@@ -213,10 +219,12 @@ static int show_vfsstat(struct seq_file *m, struct vfsmount *mnt)
+ 	struct super_block *sb = mnt_path.dentry->d_sb;
+ 	int err;
+ 
++#if defined(CONFIG_SUS_FS)
+ 	if (is_suspicious_mount(mnt, &p->root)) {
+ 		err = SEQ_SKIP;
+ 		goto out;
+ 	}
++#endif
+ 
+ 	/* device */
+ 	if (sb->s_op->show_devname) {
+diff --git a/fs/stat.c b/fs/stat.c
+index e7789907481a..c2e0dfaccdbc 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -17,7 +17,9 @@
+ #include <linux/syscalls.h>
+ #include <linux/pagemap.h>
+ #include <linux/compat.h>
++#if defined(CONFIG_SUS_FS)
+ #include <linux/suspicious.h>
++#endif
+ 
+ #include <linux/uaccess.h>
+ #include <asm/unistd.h>
+@@ -111,9 +113,11 @@ int vfs_getattr(const struct path *path, struct kstat *stat,
+ {
+ 	int retval;
+ 
++#if defined(CONFIG_SUS_FS)
+ 	if (is_suspicious_path(path)) {
+ 		return -ENOENT;
+ 	}
++#endif
+ 
+ 	retval = security_inode_getattr(path);
+ 	if (retval)

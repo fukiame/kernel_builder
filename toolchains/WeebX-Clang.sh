@@ -10,7 +10,7 @@ case $1 in
     # Clone compiler
     if [[ ! -d "${dir}" ]]; then
       mkdir ${dir} && cd ${dir}
-	  curl -Lo a.tar.gz "https://github.com/XSans0/WeebX-Clang/releases/download/WeebX-Clang-18.0.0-release/WeebX-Clang-18.0.0.tar.gz"
+	  curl -Lo a.tar.gz "https://github.com/XSans0/WeebX-Clang/releases/download/WeebX-Clang-20.0.0git-release/WeebX-Clang-20.0.0git.tar.gz"
 	  tar -zxf a.tar.gz
     fi
   ;;

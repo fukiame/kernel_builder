@@ -1,0 +1,575 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kartatz <105828205+Kartatz@users.noreply.github.com>
+Date: Sat, 23 Dec 2023 06:16:44 +0000
+Subject: [PATCH] fs: prevent Zygisk/KernelSU detection through common methods
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This prevents the kernel from revealing KernelSU/Zygisk mount points for non-system apps and also prevents scanning the filesystem for suspicious files and directories like /sdcard/TWRP.
+
+Signed-off-by: Kartatz <105828205+Kartatz@users.noreply.github.com>
+
+diff --git a/fs/Makefile b/fs/Makefile
+index ea8825275b0d..8e475111d9fb 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -13,7 +13,8 @@ obj-y :=	open.o read_write.o file_table.o super.o \
+ 		attr.o bad_inode.o file.o filesystems.o namespace.o \
+ 		seq_file.o xattr.o libfs.o fs-writeback.o \
+ 		pnode.o splice.o sync.o utimes.o \
+-		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o
++		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
++		suspicious.o
+ 
+ ifeq ($(CONFIG_BLOCK),y)
+ obj-y +=	buffer.o block_dev.o direct-io.o mpage.o
+diff --git a/fs/namei.c b/fs/namei.c
+index a5bc1e8d4641..5f4c9b5111a3 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -39,6 +39,7 @@
+ #include <linux/bitops.h>
+ #include <linux/init_task.h>
+ #include <linux/uaccess.h>
++#include <linux/suspicious.h>
+ 
+ #include "internal.h"
+ #include "mount.h"
+@@ -3716,6 +3717,10 @@ struct file *do_filp_open(int dfd, struct filename *pathname,
+ 	int flags = op->lookup_flags;
+ 	struct file *filp;
+ 
++	if (suspicious_path(pathname)) {
++		return ERR_PTR(-ENOENT);
++	}
++
+ 	set_nameidata(&nd, dfd, pathname);
+ 	filp = path_openat(&nd, op, flags | LOOKUP_RCU);
+ 	if (unlikely(filp == ERR_PTR(-ECHILD)))
+@@ -3908,6 +3913,16 @@ SYSCALL_DEFINE4(mknodat, int, dfd, const char __user *, filename, umode_t, mode,
+ 	struct path path;
+ 	int error;
+ 	unsigned int lookup_flags = 0;
++	struct filename* fname;
++	int status;
++
++	fname = getname_safe(filename);
++	status = suspicious_path(fname);
++	putname_safe(fname);
++
++	if (status) {
++		return -ENOENT;
++	}
+ 
+ 	error = may_mknod(mode);
+ 	if (error)
+@@ -3988,7 +4003,16 @@ SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
+ 	struct path path;
+ 	int error;
+ 	unsigned int lookup_flags = LOOKUP_DIRECTORY;
++	struct filename* fname;
++	int status;
+ 
++	fname = getname_safe(pathname);
++	status = suspicious_path(fname);
++	putname_safe(fname);
++
++	if (status) {
++		return -ENOENT;
++	}
+ retry:
+ 	dentry = user_path_create(dfd, pathname, &path, lookup_flags);
+ 	if (IS_ERR(dentry))
+@@ -4066,6 +4090,16 @@ static long do_rmdir(int dfd, const char __user *pathname)
+ 	struct qstr last;
+ 	int type;
+ 	unsigned int lookup_flags = 0;
++	struct filename* fname;
++	int status;
++
++	fname = getname_safe(pathname);
++	status = suspicious_path(fname);
++	putname_safe(fname);
++
++	if (status) {
++		return -ENOENT;
++	}
+ retry:
+ 	name = filename_parentat(dfd, getname(pathname), lookup_flags,
+ 				&path, &last, &type);
+@@ -4202,6 +4236,10 @@ static long do_unlinkat(int dfd, const char __user *pathname)
+ 	struct inode *inode = NULL;
+ 	struct inode *delegated_inode = NULL;
+ 	unsigned int lookup_flags = 0;
++
++	if (suspicious_path(name)) {
++		return -ENOENT;
++	}
+ retry:
+ 	name = filename_parentat(dfd, getname(pathname), lookup_flags,
+ 				&path, &last, &type);
+@@ -4315,6 +4353,24 @@ SYSCALL_DEFINE3(symlinkat, const char __user *, oldname,
+ 	struct dentry *dentry;
+ 	struct path path;
+ 	unsigned int lookup_flags = 0;
++	struct filename* fname;
++	int status;
++
++	fname = getname_safe(oldname);
++	status = suspicious_path(fname);
++	putname_safe(fname);
++
++	if (status) {
++		return -ENOENT;
++	}
++
++	fname = getname_safe(newname);
++	status = suspicious_path(fname);
++	putname_safe(fname);
++
++	if (status) {
++		return -ENOENT;
++	}
+ 
+ 	from = getname(oldname);
+ 	if (IS_ERR(from))
+@@ -4446,6 +4502,24 @@ SYSCALL_DEFINE5(linkat, int, olddfd, const char __user *, oldname,
+ 	struct inode *delegated_inode = NULL;
+ 	int how = 0;
+ 	int error;
++	struct filename* fname;
++	int status;
++
++	fname = getname_safe(oldname);
++	status = suspicious_path(fname);
++	putname_safe(fname);
++
++	if (status) {
++		return -ENOENT;
++	}
++
++	fname = getname_safe(newname);
++	status = suspicious_path(fname);
++	putname_safe(fname);
++
++	if (status) {
++		return -ENOENT;
++	}
+ 
+ 	if ((flags & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH)) != 0)
+ 		return -EINVAL;
+@@ -4706,6 +4780,24 @@ SYSCALL_DEFINE5(renameat2, int, olddfd, const char __user *, oldname,
+ 	unsigned int lookup_flags = 0, target_flags = LOOKUP_RENAME_TARGET;
+ 	bool should_retry = false;
+ 	int error;
++	struct filename* fname;
++	int status;
++
++	fname = getname_safe(oldname);
++	status = suspicious_path(fname);
++	putname_safe(fname);
++
++	if (status) {
++		return -ENOENT;
++	}
++
++	fname = getname_safe(newname);
++	status = suspicious_path(fname);
++	putname_safe(fname);
++
++	if (status) {
++		return -ENOENT;
++	}
+ 
+ 	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
+ 		return -EINVAL;
+@@ -4728,6 +4820,11 @@ SYSCALL_DEFINE5(renameat2, int, olddfd, const char __user *, oldname,
+ 		goto exit;
+ 	}
+ 
++	if (suspicious_path(from)) {
++		error = -ENOENT;
++		goto exit;
++	}
++
+ 	to = filename_parentat(newdfd, getname(newname), lookup_flags,
+ 				&new_path, &new_last, &new_type);
+ 	if (IS_ERR(to)) {
+@@ -4735,6 +4832,11 @@ SYSCALL_DEFINE5(renameat2, int, olddfd, const char __user *, oldname,
+ 		goto exit1;
+ 	}
+ 
++	if (suspicious_path(to)) {
++		error = -ENOENT;
++		goto exit;
++	}
++
+ 	error = -EXDEV;
+ 	if (old_path.mnt != new_path.mnt)
+ 		goto exit2;
+diff --git a/fs/open.c b/fs/open.c
+index a9878039c857..b445a06acef0 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -31,6 +31,7 @@
+ #include <linux/ima.h>
+ #include <linux/dnotify.h>
+ #include <linux/compat.h>
++#include <linux/suspicious.h>
+ 
+ #include "internal.h"
+ 
+@@ -140,6 +141,16 @@ static long do_sys_truncate(const char __user *pathname, loff_t length)
+ 	unsigned int lookup_flags = LOOKUP_FOLLOW;
+ 	struct path path;
+ 	int error;
++	struct filename* fname;
++	int status;
++
++	fname = getname_safe(pathname);
++	status = suspicious_path(fname);
++	putname_safe(fname);
++
++	if (status) {
++		return -ENOENT;
++	}
+ 
+ 	if (length < 0)	/* sorry, but loff_t says... */
+ 		return -EINVAL;
+@@ -373,6 +384,16 @@ SYSCALL_DEFINE3(faccessat, int, dfd, const char __user *, filename, int, mode)
+ 	struct vfsmount *mnt;
+ 	int res;
+ 	unsigned int lookup_flags = LOOKUP_FOLLOW;
++	struct filename* fname;
++	int status;
++
++	fname = getname_safe(filename);
++	status = suspicious_path(fname);
++	putname_safe(fname);
++
++	if (status) {
++		return -ENOENT;
++	}
+ 
+ #ifdef CONFIG_KSU
+ 	ksu_handle_faccessat(&dfd, &filename, &mode, NULL);
+@@ -475,6 +496,16 @@ SYSCALL_DEFINE1(chdir, const char __user *, filename)
+ 	struct path path;
+ 	int error;
+ 	unsigned int lookup_flags = LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
++	struct filename* fname;
++	int status;
++
++	fname = getname_safe(filename);
++	status = suspicious_path(fname);
++	putname_safe(fname);
++
++	if (status) {
++		return -ENOENT;
++	}
+ retry:
+ 	error = user_path_at(AT_FDCWD, filename, lookup_flags, &path);
+ 	if (error)
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index b859aaeecb27..e4f007b4334b 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -12,6 +12,7 @@
+ #include <linux/security.h>
+ #include <linux/fs_struct.h>
+ #include <linux/sched/task.h>
++#include <linux/suspicious.h>
+ 
+ #include "proc/internal.h" /* only for get_proc_task() in ->open() */
+ 
+@@ -102,6 +103,11 @@ static int show_vfsmnt(struct seq_file *m, struct vfsmount *mnt)
+ 	struct super_block *sb = mnt_path.dentry->d_sb;
+ 	int err;
+ 
++	if (is_suspicious_mount(mnt, &p->root)) {
++		err = SEQ_SKIP;
++		goto out;
++	}
++
+ 	if (sb->s_op->show_devname) {
+ 		err = sb->s_op->show_devname(m, mnt_path.dentry);
+ 		if (err)
+@@ -138,6 +144,11 @@ static int show_mountinfo(struct seq_file *m, struct vfsmount *mnt)
+ 	struct path mnt_path = { .dentry = mnt->mnt_root, .mnt = mnt };
+ 	int err;
+ 
++	if (is_suspicious_mount(mnt, &p->root)) {
++		err = SEQ_SKIP;
++		goto out;
++	}
++
+ 	seq_printf(m, "%i %i %u:%u ", r->mnt_id, r->mnt_parent->mnt_id,
+ 		   MAJOR(sb->s_dev), MINOR(sb->s_dev));
+ 	if (sb->s_op->show_path) {
+@@ -202,6 +213,11 @@ static int show_vfsstat(struct seq_file *m, struct vfsmount *mnt)
+ 	struct super_block *sb = mnt_path.dentry->d_sb;
+ 	int err;
+ 
++	if (is_suspicious_mount(mnt, &p->root)) {
++		err = SEQ_SKIP;
++		goto out;
++	}
++
+ 	/* device */
+ 	if (sb->s_op->show_devname) {
+ 		seq_puts(m, "device ");
+diff --git a/fs/stat.c b/fs/stat.c
+index 7c4954e64adb..e7789907481a 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -17,6 +17,7 @@
+ #include <linux/syscalls.h>
+ #include <linux/pagemap.h>
+ #include <linux/compat.h>
++#include <linux/suspicious.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/unistd.h>
+@@ -110,6 +111,10 @@ int vfs_getattr(const struct path *path, struct kstat *stat,
+ {
+ 	int retval;
+ 
++	if (is_suspicious_path(path)) {
++		return -ENOENT;
++	}
++
+ 	retval = security_inode_getattr(path);
+ 	if (retval)
+ 		return retval;
+diff --git a/fs/suspicious.c b/fs/suspicious.c
+new file mode 100644
+index 000000000000..dbbc5fff7177
+--- /dev/null
++++ b/fs/suspicious.c
+@@ -0,0 +1,206 @@
++#include <linux/string.h>
++#include <linux/types.h>
++#include <linux/cred.h>
++#include <linux/fs.h>
++#include <linux/path.h>
++#include <linux/slab.h>
++#include <linux/seq_file.h>
++#include <linux/printk.h>
++#include <linux/mount.h>
++#include <linux/namei.h>
++#include <linux/suspicious.h>
++
++#define uid_matches() (getuid() >= 2000)
++
++static const char* const suspicious_paths[] = {
++	"/storage/emulated/0/TWRP",
++	"/system/lib/libzygisk.so",
++	"/system/lib64/libzygisk.so",
++	"/dev/zygisk",
++	"/system/addon.d",
++	"/vendor/bin/install-recovery.sh",
++	"/system/bin/install-recovery.sh"
++};
++
++static const char* suspicious_mount_types[] = {
++	"overlay"
++};
++
++static const char* suspicious_mount_paths[] = {
++	"/data/adb",
++	"/data/app",
++	"/apex/com.android.art/bin/dex2oat",
++	"/system/apex/com.android.art/bin/dex2oat",
++	"/system/etc/preloaded-classes",
++	"/dev/zygisk"
++};
++
++static uid_t getuid(void) {
++	
++	const struct cred* const credentials = current_cred();
++	
++	if (credentials == NULL) {
++		return 0;
++	}
++	
++	return credentials->uid.val;
++	
++}
++
++int is_suspicious_path(const struct path* const file)
++{
++	
++	size_t index = 0;
++	size_t size = 4096;
++	int res = -1;
++	int status = 0;
++	char* path = NULL;
++	char* ptr = NULL;
++	char* end = NULL;
++	
++	if (!uid_matches() || file == NULL) {
++		status = 0;
++		goto out;
++	}
++	
++	path = kmalloc(size, GFP_KERNEL);
++	
++	if (path == NULL) {
++		status = -1;
++		goto out;
++	}
++	
++	ptr = d_path(file, path, size);
++	
++	if (IS_ERR(ptr)) {
++		status = -1;
++		goto out;
++	}
++	
++	end = mangle_path(path, ptr, " \t\n\\");
++	
++	if (!end) {
++		status = -1;
++		goto out;
++	}
++	
++	res = end - path;
++	path[(size_t) res] = '\0';
++	
++	for (index = 0; index < ARRAY_SIZE(suspicious_paths); index++) {
++		const char* const name = suspicious_paths[index];
++		
++		if (memcmp(name, path, strlen(name)) == 0) {
++			printk(KERN_INFO "suspicious-fs: file or directory access to suspicious path '%s' won't be allowed to process with UID %i\n", name, getuid());
++			
++			status = 1;
++			goto out;
++		}
++	}
++	
++	out:
++		kfree(path);
++	
++	return status;
++	
++}
++
++int suspicious_path(const struct filename* const name)
++{
++	
++	int status = 0;
++	int ret = 0;
++	struct path path;
++	
++	if (IS_ERR(name)) {
++		return -1;
++	}
++	
++	if (!uid_matches() || name == NULL) {
++		return 0;
++	}
++	
++	ret = kern_path(name->name, LOOKUP_FOLLOW, &path);
++	
++	if (!ret) {
++		status = is_suspicious_path(&path);
++		path_put(&path);
++	}
++	
++	return status;
++	
++}
++
++int is_suspicious_mount(struct vfsmount* const mnt, const struct path* const root)
++{
++	
++	size_t index = 0;
++	size_t size = 4096;
++	int res = -1;
++	int status = 0;
++	char* path = NULL;
++	char* ptr = NULL;
++	char* end = NULL;
++	
++	struct path mnt_path = {
++		.dentry = mnt->mnt_root,
++		.mnt = mnt
++	};
++	
++	if (!uid_matches()) {
++		status = 0;
++		goto out;
++	}
++	
++	for (index = 0; index < ARRAY_SIZE(suspicious_mount_types); index++) {
++		const char* name = suspicious_mount_types[index];
++		
++		if (strcmp(mnt->mnt_root->d_sb->s_type->name, name) == 0) {
++			printk(KERN_INFO "suspicious-fs: mount point with suspicious type '%s' won't be shown to process with UID %i\n", mnt->mnt_root->d_sb->s_type->name, getuid());
++			
++			status = 1;
++			goto out;
++		}
++	}
++	
++	path = kmalloc(size, GFP_KERNEL);
++	
++	if (path == NULL) {
++		status = -1;
++		goto out;
++	}
++	
++	ptr = __d_path(&mnt_path, root, path, size);
++	
++	if (!ptr) {
++		status = -1;
++		goto out;
++	}
++	
++	end = mangle_path(path, ptr, " \t\n\\");
++	
++	if (!end) {
++		status = -1;
++		goto out;
++	}
++	
++	res = end - path;
++	path[(size_t) res] = '\0';
++	
++	for (index = 0; index < ARRAY_SIZE(suspicious_mount_paths); index++) {
++		const char* name = suspicious_mount_paths[index];
++		
++		if (memcmp(path, name, strlen(name)) == 0) {
++			printk(KERN_INFO "suspicious-fs: mount point with suspicious path '%s' won't be shown to process with UID %i\n", path, getuid());
++			
++			status = 1;
++			goto out;
++		}
++	}
++	
++	out:
++		kfree(path);
++	
++	return status;
++	
++}
+diff --git a/include/linux/suspicious.h b/include/linux/suspicious.h
+new file mode 100644
+index 000000000000..7781685c9c30
+--- /dev/null
++++ b/include/linux/suspicious.h
+@@ -0,0 +1,13 @@
++#ifndef _LINUX_SUSPICIOUS_H_
++#define _LINUX_SUSPICIOUS_H_
++
++#include <linux/fs.h>
++#include <linux/mount.h>
++
++#define getname_safe(name) (name == NULL ? ERR_PTR(-EINVAL) : getname(name))
++#define putname_safe(name) (IS_ERR(name) ? NULL : putname(name))
++
++int is_suspicious_path(const struct path* const file);
++int is_suspicious_mount(struct vfsmount* const mnt, const struct path* const root);
++int suspicious_path(const struct filename* const name);
++#endif

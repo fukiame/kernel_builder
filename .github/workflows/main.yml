@@ -16,15 +16,15 @@ on: # [push]
       COMPILER:
         description: 'compilers used'
         required: true
-        default: 'Neutron-Clang'
+        default: 'WeebX-Clang'
       KREPO:
         description: 'kernel repo'
         required: true
-        default: 'TelegramAt25/yuki_kernel_xiaomi_selene'
+        default: 'https://github.com/25ji-Telegram-de/android_kernel_xiaomi_selene'
       KBRANCH:
         description: 'kernel branch'
         required: true
-        default: 'niigo'
+        default: 'yuki'
       NOTES:
         description: 'notes to print out'
         required: false
@@ -44,7 +44,7 @@ on: # [push]
       KSU:
         description: 'if dont want ksu then leave blank'
         required: false
-        default: ''
+        default: 'both'
       TG_RECIPENT:
         description: 'idk'
         required: false
@@ -52,7 +52,7 @@ on: # [push]
       CONTAINER:
         description: 'if you know you know'
         required: true
-        default: 'fedora:rawhide'
+        default: 'fedora:39'
 
 env:
   BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
@@ -107,7 +107,7 @@ jobs:
             if [ ! -z "$VERBOSE" ]; then
               bash tg_utils.sh msg "gh $RUN_NUM: cloning kernel source%nlgh $RUN_NUM: repo: $REPO%nlgh $RUN_NUM: branch: $KERNEL_BRANCH"
             fi
-            git clone --depth=1 --single-branch https://github.com/$REPO -b $KERNEL_BRANCH kernel
+            git clone --depth=1 --single-branch $REPO -b $KERNEL_BRANCH kernel
         - name: print kernel info
           run: |
             cd kernel

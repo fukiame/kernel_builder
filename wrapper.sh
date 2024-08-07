@@ -78,7 +78,7 @@ if [[ $(ls *.zip) ]]; then
 fi
 
 rm *.zip*
-if [[ ! -z "$CLEAN" ]]; then rm -rf out; fi
+if [[ ! -z "$1" ]]; then rm -rf out; fi
 
 RUN_END=$(date +"%s")
 WDIFF=$((RUN_END - RUN_START))

@@ -38,6 +38,8 @@ else
   git reset --hard origin/${kernel_branch}
 fi
 
+if [[ ! -z "$1" ]]; then rm -rf out; fi
+
 source ../env
 bash ../tg_utils.sh msg "kernel name: ${kernel_name}%nlkernel ver: ${kernel_ver}%nlkernel head commit: ${kernel_head}%nldefconfig: ${defconfig}"
 

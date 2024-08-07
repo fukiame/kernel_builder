@@ -2,6 +2,13 @@
 #
 # wrapper providing almost the same amount of verbosity as the main github actions workflow
 
+sln=$(readlink -f "$0")
+spath=$(dirname "$sln")
+echo $spath
+
+export OLDDIR=$(pwd)
+cd $spath
+
 source ./priv_env
 
 RUN_ID=$(shuf -ern4 {0..9} | sha1sum - | head -c 8)
@@ -76,3 +83,5 @@ if [[ ! -z "$CLEAN" ]]; then rm -rf out; fi
 RUN_END=$(date +"%s")
 WDIFF=$((RUN_END - RUN_START))
 [ "$RES" = "0" ] && bash ../tg_utils.sh msg "$RUN_ID: run failed in $((WDIFF / 60))m, $((WDIFF % 60))s" || bash ../tg_utils.sh msg "$RUN_ID: run ended in $((WDIFF / 60))m, $((WDIFF % 60))s"
+
+cd "$OLDDIR"

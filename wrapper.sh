@@ -30,12 +30,14 @@ fi
 if [ ! -d kernel ]; then
   git clone ${kernel_repo} -b ${kernel_branch} kernel || exit 1
   cd kernel
+  git submodule update --init --recursive
 else
   cd kernel || exit 1
   git reset --hard
   git checkout ${kernel_branch}
   git fetch origin ${kernel_branch}
   git reset --hard origin/${kernel_branch}
+  git submodule update --init --recursive
 fi
 
 if [[ ! -z "$1" ]]; then rm -rf out; fi

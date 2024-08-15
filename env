@@ -12,18 +12,18 @@ export SUBARCH="arm64"
 export KBUILD_BUILD_USER="nijuugo-ji"
 export KBUILD_BUILD_HOST="telegram-de"
 
-export defconfig="selene_defconfig"
+export defconfig="blossom_defconfig"
 
 if [[ -z "$zipper_repo" ]]; then
   export zipper_repo="https://github.com/fukiame/AnyKernel3-niigo"
 fi
 if [[ -z "$zipper_branch" ]]; then
-  export zipper_branch=yuki
+  export zipper_branch=enanan
 fi
 
-export out_image="${maindir}/out/arch/${ARCH}/boot/Image.gz-dtb"
-export out_dtb="${maindir}/out/arch/${ARCH}/boot/dts/mediatek/mt6768.dtb"
-export out_dtbo="${maindir}/out/arch/${ARCH}/boot/dtbo.img"
+export out_image="${maindir}/out/arch/${ARCH}/boot/Image.gz"
+export out_dtb="${maindir}/out/arch/${ARCH}/boot/dts/mediatek/mt6765.dtb"
+#export out_dtbo="${maindir}/out/arch/${ARCH}/boot/dtbo.img"
 
 export zipper="${outside}/zipper"
 

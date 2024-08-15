@@ -6,10 +6,10 @@ export BOT_TOKEN="hdoznfidvyfnfischsizbiajefb"
 export CHAT_ID="72769420"
 
 # your kernel's github repo, without the https://github.com/, just the part after that
-kernel_repo="https://github.com/TelegramAt25/yuki_kernel_xiaomi_selene"
+kernel_repo="https://github.com/TelegramAt25/empty_kernel_xiaomi_blossom"
 
 # the branch you want to use in the repo above
-kernel_branch="niigo"
+kernel_branch="enanan"
 
 # whether you want ksu patched in at build time or not
 # leave blank for "no", "both" for both ksu and non ksu, anything else for "yes"
@@ -18,7 +18,7 @@ export PATCH_KSU=""
 
 # the compiler(s) to use
 # those are the name of the scripts in ./toolchains, without ".sh"
-export COMPILERS="Neutron-Clang-17"
+export COMPILERS="AOSP-Clang"
 
 # additional verbose info
 #VERBOSE=yes

@@ -1,17 +1,14 @@
-From 7fa742485f463ab9fcda4f4b191b901ed90becbf Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: fukiame <fukiame@proton.me>
 Date: Tue, 29 Aug 2023 21:29:32 +0700
-Subject: [PATCH 1/5] fs/exec: add ksu execveat hook
+Subject: [PATCH] fs/exec: add ksu execveat hook
 
----
- fs/exec.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index 82d552981719..99841313cf0f 100644
+index 5fb700db6bad..9dd116306aa2 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1718,6 +1718,13 @@ static int exec_binprm(struct linux_binprm *bprm)
+@@ -1706,6 +1706,13 @@ static int exec_binprm(struct linux_binprm *bprm)
  	return ret;
  }
  
@@ -25,7 +22,7 @@ index 82d552981719..99841313cf0f 100644
  /*
   * sys_execve() executes a new program.
   */
-@@ -1726,6 +1733,12 @@ static int __do_execve_file(int fd, struct filename *filename,
+@@ -1714,6 +1721,12 @@ static int __do_execve_file(int fd, struct filename *filename,
  			    struct user_arg_ptr envp,
  			    int flags, struct file *file)
  {
@@ -38,6 +35,3 @@ index 82d552981719..99841313cf0f 100644
  	char *pathbuf = NULL;
  	struct linux_binprm *bprm;
  	struct files_struct *displaced;
--- 
-2.42.0
-

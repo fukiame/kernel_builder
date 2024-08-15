@@ -1,11 +1,8 @@
-From 728cb2b2aed7058cfcf7eeee31af6a16dbeb791f Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: fukiame <fukiame@proton.me>
 Date: Tue, 29 Aug 2023 21:30:52 +0700
-Subject: [PATCH 2/5] fs/open: add ksu faccessat hook
+Subject: [PATCH] fs/open: add ksu faccessat hook
 
----
- fs/open.c | 6 ++++++
- 1 file changed, 6 insertions(+)
 
 diff --git a/fs/open.c b/fs/open.c
 index b14aef04ee01..ba3a3eb48841 100644
@@ -31,6 +28,3 @@ index b14aef04ee01..ba3a3eb48841 100644
  	if (mode & ~S_IRWXO)	/* where's F_OK, X_OK, W_OK, R_OK? */
  		return -EINVAL;
  
--- 
-2.42.0
-

@@ -1,17 +1,14 @@
-From 912b54f5ae25502ce405ee8c1ca78b872777f93c Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: fukiame <fukiame@proton.me>
 Date: Tue, 29 Aug 2023 21:38:12 +0700
-Subject: [PATCH 5/5] drivers/input/input: add ksu input_handle_event hook
+Subject: [PATCH] drivers/input/input: add ksu input_handle_event hook
 
----
- drivers/input/input.c | 6 ++++++
- 1 file changed, 6 insertions(+)
 
 diff --git a/drivers/input/input.c b/drivers/input/input.c
-index 57072d5a6ae0..566f97ba4313 100644
+index cd250bc21168..c6266e59bce6 100644
 --- a/drivers/input/input.c
 +++ b/drivers/input/input.c
-@@ -366,11 +366,17 @@ static int input_get_disposition(struct input_dev *dev,
+@@ -367,11 +367,17 @@ static int input_get_disposition(struct input_dev *dev,
  	return disposition;
  }
  
@@ -29,6 +26,3 @@ index 57072d5a6ae0..566f97ba4313 100644
  	if (disposition != INPUT_IGNORE_EVENT && type != EV_SYN)
  		add_input_randomness(type, code, value);
  
--- 
-2.42.0
-

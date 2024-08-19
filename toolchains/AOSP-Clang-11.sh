@@ -3,9 +3,9 @@
 maindir="$(pwd)"
 outside="${maindir}/.."
 
-clang="${outside}/aosp_clang"
-gcc64="${outside}/aosp_gcc64"
-gcc="${outside}/aosp_gcc"
+clang="${outside}/aosp_clang11"
+gcc64="${outside}/aosp_gcc64_49"
+gcc="${outside}/aosp_gcc_49"
 
 case $1 in
   "setup" )

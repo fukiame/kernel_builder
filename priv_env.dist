@@ -18,7 +18,7 @@ export PATCH_KSU=""
 
 # the compiler(s) to use
 # those are the name of the scripts in ./toolchains, without ".sh"
-export COMPILERS="AOSP-Clang"
+export COMPILERS="AOSP-Clang-11"
 
 # additional verbose info
 #VERBOSE=yes

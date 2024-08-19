@@ -1,37 +1,36 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: fukiame <fukiame@proton.me>
-Date: Tue, 29 Aug 2023 21:29:32 +0700
+Date: Tue, 20 Aug 2024 00:16:37 +0700
 Subject: [PATCH] fs/exec: add ksu execveat hook
 
+Signed-off-by: fukiame <fukiame@proton.me>
 
 diff --git a/fs/exec.c b/fs/exec.c
-index 5fb700db6bad..9dd116306aa2 100644
+index d6dd30bd6a20..ccbe21db2508 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1706,6 +1706,13 @@ static int exec_binprm(struct linux_binprm *bprm)
- 	return ret;
+@@ -1890,11 +1890,24 @@ static int __do_execve_file(int fd, struct filename *filename,
+ 	return retval;
  }
  
-+
++#ifdef CONFIG_KSU
 +extern bool ksu_execveat_hook __read_mostly;
 +extern int ksu_handle_execveat(int *fd, struct filename **filename_ptr, void *argv,
-+			  void *envp, int *flags);
++			void *envp, int *flags);
 +extern int ksu_handle_execveat_sucompat(int *fd, struct filename **filename_ptr,
-+				    void *argv, void *envp, int *flags);
-+
- /*
-  * sys_execve() executes a new program.
-  */
-@@ -1714,6 +1721,12 @@ static int __do_execve_file(int fd, struct filename *filename,
- 			    struct user_arg_ptr envp,
- 			    int flags, struct file *file)
++				 void *argv, void *envp, int *flags);
++#endif
+ static int do_execveat_common(int fd, struct filename *filename,
+ 			      struct user_arg_ptr argv,
+ 			      struct user_arg_ptr envp,
+ 			      int flags)
  {
-+
++#ifdef CONFIG_KSU
 +	if (unlikely(ksu_execveat_hook))
 +		ksu_handle_execveat(&fd, &filename, &argv, &envp, &flags);
 +	else
 +		ksu_handle_execveat_sucompat(&fd, &filename, &argv, &envp, &flags);
-+
- 	char *pathbuf = NULL;
- 	struct linux_binprm *bprm;
- 	struct files_struct *displaced;
++#endif
+ 	return __do_execve_file(fd, filename, argv, envp, flags, NULL);
+ }
+ 

@@ -1,30 +1,32 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: fukiame <fukiame@proton.me>
-Date: Tue, 29 Aug 2023 21:30:52 +0700
+Date: Tue, 20 Aug 2024 00:18:34 +0700
 Subject: [PATCH] fs/open: add ksu faccessat hook
 
+Signed-off-by: fukiame <fukiame@proton.me>
 
 diff --git a/fs/open.c b/fs/open.c
-index b14aef04ee01..ba3a3eb48841 100644
+index 155731594c8e..0d21182538e5 100644
 --- a/fs/open.c
 +++ b/fs/open.c
 @@ -348,6 +348,10 @@ SYSCALL_DEFINE4(fallocate, int, fd, int, mode, loff_t, offset, loff_t, len)
  	return ksys_fallocate(fd, mode, offset, len);
  }
  
-+
++#ifdef CONFIG_KSU
 +extern int ksu_handle_faccessat(int *dfd, const char __user **filename_user, int *mode,
-+			   int *flags);
-+
++			 int *flags);
++#endif
  /*
   * access() needs to use the real uid/gid, not the effective uid/gid.
   * We do this by temporarily clearing all FS-related capabilities and
-@@ -363,6 +367,8 @@ long do_faccessat(int dfd, const char __user *filename, int mode)
+@@ -362,6 +366,9 @@ long do_faccessat(int dfd, const char __user *filename, int mode)
+ 	struct vfsmount *mnt;
  	int res;
  	unsigned int lookup_flags = LOOKUP_FOLLOW;
- 
++#ifdef CONFIG_KSU
 +	ksu_handle_faccessat(&dfd, &filename, &mode, NULL);
-+
++#endif
+ 
  	if (mode & ~S_IRWXO)	/* where's F_OK, X_OK, W_OK, R_OK? */
  		return -EINVAL;
- 

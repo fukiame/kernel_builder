@@ -1,11 +1,12 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: fukiame <fukiame@proton.me>
-Date: Thu, 1 Aug 2024 18:08:20 +0700
-Subject: [PATCH] fs/devpts: inode: add ksu handle
+Date: Tue, 20 Aug 2024 00:28:45 +0700
+Subject: [PATCH] fs/devpts: inode: add ksu devpts hook
 
+Signed-off-by: fukiame <fukiame@proton.me>
 
 diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
-index 553a3f3300ae..8d2dfb85d246 100644
+index 553a3f3300ae..f1bb2e908fc6 100644
 --- a/fs/devpts/inode.c
 +++ b/fs/devpts/inode.c
 @@ -599,6 +599,10 @@ struct dentry *devpts_pty_new(struct pts_fs_info *fsi, int index, void *priv)
@@ -14,7 +15,7 @@ index 553a3f3300ae..8d2dfb85d246 100644
  
 +#ifdef CONFIG_KSU
 +extern int ksu_handle_devpts(struct inode*);
-+#endif /* CONFIG_KSU */
++#endif
 +
  /**
   * devpts_get_priv -- get private data for a slave
@@ -25,7 +26,7 @@ index 553a3f3300ae..8d2dfb85d246 100644
  {
 +#ifdef CONFIG_KSU
 +	ksu_handle_devpts(dentry->d_inode);
-+#endif /* CONFIG_KSU */
++#endif
  	if (dentry->d_sb->s_magic != DEVPTS_SUPER_MAGIC)
  		return NULL;
  	return dentry->d_fsdata;

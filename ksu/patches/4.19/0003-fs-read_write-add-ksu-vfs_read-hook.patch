@@ -1,26 +1,30 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: fukiame <fukiame@proton.me>
-Date: Tue, 29 Aug 2023 21:31:22 +0700
+Date: Tue, 20 Aug 2024 00:21:31 +0700
 Subject: [PATCH] fs/read_write: add ksu vfs_read hook
 
+Signed-off-by: fukiame <fukiame@proton.me>
 
 diff --git a/fs/read_write.c b/fs/read_write.c
-index 4954fae7f736..fa8bb04b86dd 100644
+index 4954fae7f736..1e678b85a0a4 100644
 --- a/fs/read_write.c
 +++ b/fs/read_write.c
-@@ -434,8 +434,15 @@ ssize_t kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
+@@ -434,9 +434,18 @@ ssize_t kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
  }
  EXPORT_SYMBOL(kernel_read);
  
++#ifdef CONFIG_KSU
 +extern bool ksu_vfs_read_hook __read_mostly;
 +extern int ksu_handle_vfs_read(struct file **file_ptr, char __user **buf_ptr,
 +			size_t *count_ptr, loff_t **pos);
-+
++#endif
  ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
  {
+ 	ssize_t ret;
++#ifdef CONFIG_KSU
 +	if (unlikely(ksu_vfs_read_hook))
 +		ksu_handle_vfs_read(&file, &buf, &count, &pos);
-+
- 	ssize_t ret;
++#endif
  
  	if (!(file->f_mode & FMODE_READ))
+ 		return -EBADF;

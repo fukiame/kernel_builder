@@ -1,28 +1,32 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: fukiame <fukiame@proton.me>
-Date: Tue, 29 Aug 2023 21:32:00 +0700
-Subject: [PATCH] fs/stat: add ksu vfs_statx hook
+Date: Tue, 20 Aug 2024 00:23:31 +0700
+Subject: [PATCH] fs/stat: add ksu stat hook
 
+Signed-off-by: fukiame <fukiame@proton.me>
 
 diff --git a/fs/stat.c b/fs/stat.c
-index f8e6fb2c3657..e4ea28fddfe7 100644
+index 376543199b5a..a94983de6aa1 100644
 --- a/fs/stat.c
 +++ b/fs/stat.c
-@@ -148,6 +148,8 @@ int vfs_statx_fd(unsigned int fd, struct kstat *stat,
+@@ -148,6 +148,10 @@ int vfs_statx_fd(unsigned int fd, struct kstat *stat,
  }
  EXPORT_SYMBOL(vfs_statx_fd);
  
++#ifdef CONFIG_KSU
 +extern int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags);
++#endif
 +
  /**
   * vfs_statx - Get basic and extra attributes by filename
   * @dfd: A file descriptor representing the base dir for a relative filename
-@@ -170,6 +172,8 @@ int vfs_statx(int dfd, const char __user *filename, int flags,
+@@ -170,6 +174,9 @@ int vfs_statx(int dfd, const char __user *filename, int flags,
  	int error = -EINVAL;
  	unsigned int lookup_flags = LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT;
  
++#ifdef CONFIG_KSU
 +	ksu_handle_stat(&dfd, &filename, &flags);
-+
++#endif
  	if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT |
  		       AT_EMPTY_PATH | KSTAT_QUERY_FLAGS)) != 0)
  		return -EINVAL;

@@ -1,28 +1,30 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: fukiame <fukiame@proton.me>
-Date: Tue, 29 Aug 2023 21:38:12 +0700
-Subject: [PATCH] drivers/input/input: add ksu input_handle_event hook
+Date: Tue, 20 Aug 2024 00:26:14 +0700
+Subject: [PATCH] drivers/input: input: add ksu input_handle_event hook
 
+Signed-off-by: fukiame <fukiame@proton.me>
 
 diff --git a/drivers/input/input.c b/drivers/input/input.c
-index cd250bc21168..c6266e59bce6 100644
+index ecf524803b34..992596ce4522 100644
 --- a/drivers/input/input.c
 +++ b/drivers/input/input.c
-@@ -367,11 +367,17 @@ static int input_get_disposition(struct input_dev *dev,
+@@ -378,10 +378,18 @@ static int input_get_disposition(struct input_dev *dev,
  	return disposition;
  }
  
++#ifdef CONFIG_KSU
 +extern bool ksu_input_hook __read_mostly;
 +extern int ksu_handle_input_handle_event(unsigned int *type, unsigned int *code, int *value);
-+
++#endif
  static void input_handle_event(struct input_dev *dev,
  			       unsigned int type, unsigned int code, int value)
  {
  	int disposition = input_get_disposition(dev, type, code, &value);
- 
++#ifdef CONFIG_KSU
 +	if (unlikely(ksu_input_hook))
 +		ksu_handle_input_handle_event(&type, &code, &value);
-+
++#endif
+ 
  	if (disposition != INPUT_IGNORE_EVENT && type != EV_SYN)
  		add_input_randomness(type, code, value);
- 

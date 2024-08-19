@@ -32,6 +32,17 @@ case $1 in
       LD_LIBRARY_PATH="$clang/lib64:$LD_LIBRABRY_PATH" \
       CC=clang \
       LD=ld.lld \
+      NM=llvm-nm \
+      AR=llvm-ar \
+      STRIP=llvm-strip \
+      OBJCOPY=llvm-objcopy \
+      OBJDUMP=llvm-objdump \
+      READELF=llvm-readelf \
+      LLVM_IAS=1 \
+      HOSTCC=clang \
+      HOSTCXX=clang++ \
+      HOSTLD=ld.lld \
+      HOSTAR=llvm-ar \
       2>&1 | tee ${CUR_TOOLCHAIN}.log
     sh ${outside}/ver_toolchain.sh clang ld.lld > ${CUR_TOOLCHAIN}.info
   ;;

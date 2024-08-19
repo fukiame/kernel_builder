@@ -8,7 +8,7 @@ source "${outside}/env"
 
 pack() {
   if [ ! -d ${zipper} ]; then
-    git clone ${zipper_repo} -b ${zipper_branch} "${zipper}"
+    git clone ${zipper_repo} -b ${zipper_branch} "${zipper}" --single-branch --depth=1
     cd "${zipper}" || exit 1
   else
     cd "${zipper}" || exit 1

@@ -3,17 +3,19 @@
 maindir="$(pwd)"
 outside="${maindir}/.."
 
-GCC64="${outside}/gcc64"
-GCC32="${outside}/gcc32"
+GCC64="${outside}/gcc-arm64"
+GCC32="${outside}/gcc-arm"
 
 case $1 in
   "setup" )
     if [[ ! -d "${GCC64}" ]]; then
-      git clone --depth=1 https://github.com/mvaisakh/gcc-arm64 "${GCC64}"
+      curl -LO $(curl -s https://api.github.com/repos/mvaisakh/gcc-build/releases/latest | grep browser_download_url | cut -d'"' -f4 | grep 'gcc-arm64-') gcc-arm64.tar.xz
+      tar -xf gcc-arm64.tar.xz
       chmod +x "${GCC64}"/bin/*
     fi
     if [[ ! -d "${GCC32}" ]]; then
-      git clone --depth=1 https://github.com/mvaisakh/gcc-arm "${GCC32}"
+      curl -LO $(curl -s https://api.github.com/repos/mvaisakh/gcc-build/releases/latest | grep browser_download_url | cut -d'"' -f4 | grep 'gcc-arm-') gcc-arm.tar.xz
+      tar -xf gcc-arm.tar.xz
       chmod +x "${GCC32}"/bin/*
     fi
   ;;

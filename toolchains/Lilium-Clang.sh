@@ -11,7 +11,7 @@ case $1 in
     if [[ ! -d "${dir}" ]]; then
       mkdir ${dir} && cd ${dir}
       # TODO figure out a way to auto-update
-      curl -Lo a.tar.gz "https://github.com/liliumproject/clang/releases/download/20240916/lilium_clang-20240916.tar.gz"
+      curl -Lo a.tar.gz "https://github.com/liliumproject/clang/releases/download/20240919/lilium_clang-20240919.tar.gz"
       tar -zxf a.tar.gz
     fi
   ;;

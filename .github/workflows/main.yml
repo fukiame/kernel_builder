@@ -16,7 +16,7 @@ on: # [push]
       COMPILER:
         description: 'compilers used'
         required: true
-        default: 'WeebX-Clang'
+        default: 'Lilium-Clang'
       KREPO:
         description: 'kernel repo'
         required: true
@@ -24,7 +24,7 @@ on: # [push]
       KBRANCH:
         description: 'kernel branch'
         required: true
-        default: 'yuki'
+        default: 'yuki-engeki'
       NOTES:
         description: 'notes to print out'
         required: false
@@ -52,7 +52,7 @@ on: # [push]
       CONTAINER:
         description: 'if you know you know'
         required: true
-        default: 'fedora:39'
+        default: 'fedora:40'
 
 env:
   BOT_TOKEN: ${{ secrets.BOT_TOKEN }}

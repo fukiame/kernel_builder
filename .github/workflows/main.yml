@@ -16,7 +16,7 @@ on: # [push]
       COMPILER:
         description: 'compilers used'
         required: true
-        default: 'Lilium-Clang'
+        default: 'AOSP-Clang-11'
       KREPO:
         description: 'kernel repo'
         required: true

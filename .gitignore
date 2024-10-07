@@ -1,2 +1,5 @@
 priv_env
 kernel/
+*Clang*/
+*clang*/
+*gcc*/

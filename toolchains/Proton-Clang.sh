@@ -16,7 +16,7 @@ case $1 in
 
   "build" )
     export PATH="${dir}/bin:/usr/bin:${PATH}"
-    make -j$(nproc --all) O=out ARCH=arm64 SUBARCH=arm64 $2
+    make -j$(nproc --all) O=out CC=clang LD=ld.lld ARCH=arm64 SUBARCH=arm64 $2
     make -j$(nproc --all) O=out \
       CROSS_COMPILE="aarch64-linux-gnu-" \
       CROSS_COMPILE_ARM32="arm-linux-gnueabi-" \

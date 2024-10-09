@@ -9,12 +9,12 @@ GCC32="${outside}/gcc-arm"
 case $1 in
   "setup" )
     if [[ ! -d "${GCC64}" ]]; then
-      curl -LO $(curl -s https://api.github.com/repos/mvaisakh/gcc-build/releases/latest | grep browser_download_url | cut -d'"' -f4 | grep 'gcc-arm64-') gcc-arm64.tar.xz
+      curl -Lo gcc-arm64.tar.xz $(curl -s https://api.github.com/repos/mvaisakh/gcc-build/releases/latest | grep browser_download_url | cut -d'"' -f4 | grep 'gcc-arm64-')
       tar -xf gcc-arm64.tar.xz
       chmod +x "${GCC64}"/bin/*
     fi
     if [[ ! -d "${GCC32}" ]]; then
-      curl -LO $(curl -s https://api.github.com/repos/mvaisakh/gcc-build/releases/latest | grep browser_download_url | cut -d'"' -f4 | grep 'gcc-arm-') gcc-arm.tar.xz
+      curl -Lo gcc-arm.tar.xz $(curl -s https://api.github.com/repos/mvaisakh/gcc-build/releases/latest | grep browser_download_url | cut -d'"' -f4 | grep 'gcc-arm-')
       tar -xf gcc-arm.tar.xz
       chmod +x "${GCC32}"/bin/*
     fi

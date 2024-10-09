@@ -8,6 +8,7 @@ GCC32="${outside}/gcc-arm"
 
 case $1 in
   "setup" )
+    cd "${outside}"
     if [[ ! -d "${GCC64}" ]]; then
       curl -Lo gcc-arm64.tar.xz $(curl -s https://api.github.com/repos/mvaisakh/gcc-build/releases/latest | grep browser_download_url | cut -d'"' -f4 | grep 'gcc-arm64-')
       tar -xf gcc-arm64.tar.xz

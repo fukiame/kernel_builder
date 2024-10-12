@@ -52,7 +52,7 @@ on: # [push]
       CONTAINER:
         description: 'if you know you know'
         required: true
-        default: 'fedora:40'
+        default: 'fedora:39'
 
 env:
   BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
@@ -70,7 +70,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     container:
       image: ${{ github.event.inputs.CONTAINER }}
 

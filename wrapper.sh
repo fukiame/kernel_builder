@@ -9,7 +9,7 @@ echo $spath
 export OLDDIR=$(pwd)
 cd $spath
 
-source ./$1priv_env
+source ./$1priv_env || { echo "$RUN_ID: incorrect envset: nonexistent priv_env, bailing" && exit 127 ; }
 
 RUN_ID=$(shuf -ern4 {0..9} | sha1sum - | head -c 8)
 RUN_START=$(date +"%s")
@@ -18,6 +18,7 @@ RUN_START=$(date +"%s")
 #  CHAT_ID="$ALT_RECIPENT"
 #fi
 bash tg_utils.sh msg "$RUN_ID: run started"
+bash tg_utils.sh msg "$RUN_ID: using envset $1"
 
 if [ ! -z "$NOTE" ]; then
   bash tg_utils.sh msg "$NOTE"
@@ -42,7 +43,8 @@ fi
 
 if [[ ! -z "$2" ]]; then rm -rf out; fi
 
-source ../$1env
+source ../$1env || { bash tg_utils.sh msg "$RUN_ID: incorrect envset: nonexistent env, bailing" && exit 127 ; }
+
 bash ../tg_utils.sh msg "kernel name: ${kernel_name}%nlkernel ver: ${kernel_ver}%nlkernel head commit: ${kernel_head}%nldefconfig: ${defconfig}"
 
 case $PATCH_KSU in

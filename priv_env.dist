@@ -5,7 +5,7 @@ export BOT_TOKEN="hdoznfidvyfnfischsizbiajefb"
 # in bot api
 export CHAT_ID="72769420"
 
-# your kernel's github repo, without the https://github.com/, just the part after that
+# your kernel's git repo
 kernel_repo="https://github.com/TelegramAt25/empty_kernel_xiaomi_blossom"
 
 # the branch you want to use in the repo above

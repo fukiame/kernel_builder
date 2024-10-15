@@ -4,7 +4,7 @@
 
 export maindir="$(pwd)"
 export outside="${maindir}/.."
-source "${outside}/env"
+source "${outside}/$1env"
 
 curl -LSs "https://raw.githubusercontent.com/TelegramAt25/KernelSU-shukusai/elementalia/kernel/setup.sh" | bash -
 git add . && git commit -am "drivers: KernelSU"

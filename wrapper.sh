@@ -9,11 +9,11 @@ echo $spath
 export OLDDIR=$(pwd)
 cd $spath
 
-source ./priv_env
+source ./$1priv_env
 
 RUN_ID=$(shuf -ern4 {0..9} | sha1sum - | head -c 8)
 RUN_START=$(date +"%s")
-#ALT_RECIPENT=$1
+#ALT_RECIPENT=$2
 #if [ ! -z $ALT_RECIPENT ]; then
 #  CHAT_ID="$ALT_RECIPENT"
 #fi
@@ -40,29 +40,29 @@ else
   git submodule update --init --recursive
 fi
 
-if [[ ! -z "$1" ]]; then rm -rf out; fi
+if [[ ! -z "$2" ]]; then rm -rf out; fi
 
-source ../env
+source ../$1env
 bash ../tg_utils.sh msg "kernel name: ${kernel_name}%nlkernel ver: ${kernel_ver}%nlkernel head commit: ${kernel_head}%nldefconfig: ${defconfig}"
 
 case $PATCH_KSU in
   "both" )
     bash ../tg_utils.sh msg "running compilation script(s): $COMPILERS"
-    bash ../build.sh "$COMPILERS"
+    bash ../build.sh "$COMPILERS" $1
     bash ../tg_utils.sh msg "KernelSU patching enabled, patching"
-    bash ../ksu/applyPatches.sh || exit 1
+    bash ../ksu/applyPatches.sh $1 || exit 1
     bash ../tg_utils.sh msg "running compilation script(s): $COMPILERS"
-    bash ../build.sh "$COMPILERS"
+    bash ../build.sh "$COMPILERS" $1
   ;;
   "" )
     bash ../tg_utils.sh msg "running compilation script(s): $COMPILERS"
-    bash ../build.sh "$COMPILERS"
+    bash ../build.sh "$COMPILERS" $1
   ;;
   * )
     bash ../tg_utils.sh msg "KernelSU patching enabled, patching"
     bash ../ksu/applyPatches.sh || exit 1
     bash ../tg_utils.sh msg "running compilation script(s): $COMPILERS"
-    bash ../build.sh "$COMPILERS"
+    bash ../build.sh "$COMPILERS" $1
   ;;
 esac
 
@@ -82,7 +82,7 @@ if [[ $(ls *.zip) ]]; then
 fi
 
 rm *.zip*
-if [[ ! -z "$1" ]]; then rm -rf out; fi
+if [[ ! -z "$2" ]]; then rm -rf out; fi
 
 RUN_END=$(date +"%s")
 WDIFF=$((RUN_END - RUN_START))

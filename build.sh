@@ -4,7 +4,7 @@
 
 export maindir="$(pwd)"
 export outside="${maindir}/.."
-source "${outside}/env"
+source "${outside}/$2env"
 
 pack() {
   if [ ! -d ${zipper} ]; then

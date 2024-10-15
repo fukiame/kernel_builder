@@ -45,7 +45,7 @@ else
   git submodule update --init --recursive
 fi
 
-if [[ ! -z "$2" ]]; then rm -rf out; fi
+if [[ ! -z "$2" ]]; then rm -rf out ../zipper; fi
 
 source ../$1env || { bash tg_utils.sh msg "$RUN_ID: incorrect envset: nonexistent env, bailing" && exit 127 ; }
 
@@ -88,7 +88,7 @@ if [[ $(ls *.zip) ]]; then
 fi
 
 rm *.zip*
-if [[ ! -z "$2" ]]; then rm -rf out; fi
+if [[ ! -z "$2" ]]; then rm -rf out ../zipper; fi
 
 RUN_END=$(date +"%s")
 WDIFF=$((RUN_END - RUN_START))

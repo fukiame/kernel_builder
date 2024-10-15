@@ -19,6 +19,9 @@ RUN_START=$(date +"%s")
 #fi
 bash tg_utils.sh msg "$RUN_ID: run started"
 bash tg_utils.sh msg "$RUN_ID: using envset $1"
+
+[ -z "$KDIR" ] && { echo "$RUN_ID: incorrect priv_env: KDIR was not set, bailing" && exit 127 ; } || :
+
 bash tg_utils.sh msg "$RUN_ID: kernel dir: $KDIR"
 
 if [ ! -z "$NOTE" ]; then

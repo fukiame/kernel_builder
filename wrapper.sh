@@ -19,6 +19,7 @@ RUN_START=$(date +"%s")
 #fi
 bash tg_utils.sh msg "$RUN_ID: run started"
 bash tg_utils.sh msg "$RUN_ID: using envset $1"
+bash tg_utils.sh msg "$RUN_ID: kernel dir: $KDIR"
 
 if [ ! -z "$NOTE" ]; then
   bash tg_utils.sh msg "$NOTE"
@@ -28,12 +29,12 @@ if [ ! -z "$VERBOSE" ]; then
   bash tg_utils.sh msg "cloning kernel source%nlrepo: $kernel_repo%nlbranch: $kernel_branch"
 fi
 
-if [ ! -d kernel ]; then
-  git clone ${kernel_repo} -b ${kernel_branch} kernel || exit 1
-  cd kernel
+if [ ! -d "$KDIR" ]; then
+  git clone ${kernel_repo} -b ${kernel_branch} "$KDIR" || exit 1
+  cd "$KDIR"
   git submodule update --init --recursive
 else
-  cd kernel || exit 1
+  cd "$KDIR" || exit 1
   git reset --hard
   git checkout ${kernel_branch}
   git fetch origin ${kernel_branch}

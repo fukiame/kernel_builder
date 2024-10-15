@@ -5,6 +5,9 @@ export BOT_TOKEN="hdoznfidvyfnfischsizbiajefb"
 # in bot api
 export CHAT_ID="72769420"
 
+# your local kernel dir
+export KDIR=kernel
+
 # your kernel's git repo
 kernel_repo="https://github.com/TelegramAt25/empty_kernel_xiaomi_blossom"
 

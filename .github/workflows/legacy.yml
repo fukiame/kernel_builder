@@ -13,10 +13,6 @@ on: # [push]
 # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
-      COMPILER:
-        description: 'compilers used'
-        required: true
-        default: 'AOSP-GCC'
       KREPO:
         description: 'kernel repo'
         required: true
@@ -57,7 +53,7 @@ env:
   RUN_NUM: ${{ github.run_number }}_${{ github.run_attempt }}
   KERNEL_BRANCH: ${{ github.event.inputs.KBRANCH }}
   NOTE: ${{ github.event.inputs.NOTES }}
-  COMPILERS: ${{ github.event.inputs.COMPILER }}
+  COMPILERS: AOSP-GCC
   PATCH_KSU: ${{ github.event.inputs.KSU }}
   SUFFIX: ${{ github.event.inputs.SUFFIX }}
   zipper_repo: ${{ github.event.inputs.ZREPO }}

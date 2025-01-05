@@ -6,6 +6,8 @@ export maindir="$(pwd)"
 export outside="${maindir}/.."
 source "${outside}/$2env"
 
+[ -z "$NJOBS" ] && export NJOBS=$(nproc --all) || :
+
 pack() {
   if [ ! -d ${zipper} ]; then
     git clone ${zipper_repo} -b ${zipper_branch} "${zipper}" --single-branch --depth=1

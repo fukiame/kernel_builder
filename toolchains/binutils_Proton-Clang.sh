@@ -18,8 +18,8 @@ case $1 in
     export PATH="${dir}/bin:/usr/bin:${PATH}"
     export bin64="aarch64-linux-gnu"
     export bin32="arm-linux-gnueabi"
-    make -j$(nproc --all) O=out CC=clang ARCH=arm64 SUBARCH=arm64 $2
-    make -j$(nproc --all) O=out \
+    make -j$NJOBS O=out CC=clang ARCH=arm64 SUBARCH=arm64 $2
+    make -j$NJOBS O=out \
       CROSS_COMPILE="$bin64-" \
       CROSS_COMPILE_ARM32="$bin32-" \
       CROSS_COMPILE_COMPAT="$bin32-" \

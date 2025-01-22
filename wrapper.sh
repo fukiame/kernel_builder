@@ -89,7 +89,10 @@ if [[ $(ls *.zip) ]]; then
 fi
 
 rm *.zip*
-if [[ ! -z "$2" ]]; then rm -rf out ../zipper; fi
+if [[ ! -z "$2" ]]; then
+  rm -rf out ../zipper
+  rm *.log
+fi
 
 RUN_END=$(date +"%s")
 WDIFF=$((RUN_END - RUN_START))

@@ -42,7 +42,7 @@ else
   git checkout ${kernel_branch}
   git fetch origin ${kernel_branch}
   git reset --hard origin/${kernel_branch}
-  rm -rf KernelSU-Next
+  rm -rf KernelSU
   git submodule update --init --recursive
 fi
 

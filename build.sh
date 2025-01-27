@@ -24,6 +24,9 @@ pack() {
   [ -n "${out_dtbo}" ] && cp -af "${out_dtbo}" "${zipper}/dtbo.img"
   if [ -e ${maindir}/banner_append ]; then
     cat ${maindir}/banner_append >> ${zipper}/banner
+    if grep KernelSU ${maindir}/banner_append ; then
+      sed -i 's/do.skipmagisk=0/do.skipmagisk=1/g' ${zipper}/anykernel.sh || :
+    fi
   fi
   zip -r9 "$1" ./* -x .git README.md ./*placeholder
   rm ${maindir}/banner_append

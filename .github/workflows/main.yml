@@ -29,8 +29,8 @@ on: # [push]
         description: 'notes to print out'
         required: false
         default: ''
-      SUFFIX:
-        description: 'suffix to aplly to teh zip filename'
+      VERBOSE:
+        description: 'whether verbose logging should be enabled'
         required: false
         default: ''
       ZREPO:
@@ -63,7 +63,7 @@ env:
   NOTE: ${{ github.event.inputs.NOTES }}
   COMPILERS: ${{ github.event.inputs.COMPILER }}
   PATCH_KSU: ${{ github.event.inputs.KSU }}
-  SUFFIX: ${{ github.event.inputs.SUFFIX }}
+  VERBOSE: ${{ github.event.inputs.VERBOSE }}
   zipper_repo: ${{ github.event.inputs.ZREPO }}
   zipper_branch: ${{ github.event.inputs.ZBRANCH }}
   TZ: Asia/Ho_Chi_Minh

@@ -20,11 +20,11 @@ on: # [push]
       KREPO:
         description: 'kernel repo'
         required: true
-        default: 'https://github.com/25ji-Telegram-de/android_kernel_xiaomi_selene'
+        default: 'https://github.com/25ji-Telegram-de/android_kernel_xiaomi_sm8250'
       KBRANCH:
         description: 'kernel branch'
         required: true
-        default: 'lumi'
+        default: 'lineage-22.2'
       NOTES:
         description: 'notes to print out'
         required: false
@@ -44,7 +44,7 @@ on: # [push]
       KSU:
         description: 'if dont want ksu then leave blank'
         required: false
-        default: 'both'
+        default: ''
       TG_RECIPENT:
         description: 'idk'
         required: false
@@ -160,6 +160,8 @@ jobs:
             WORKFLOW_END=$(date +"%s")
             WDIFF=$((WORKFLOW_END - WORKFLOW_START))
             bash tg_utils.sh msg "gh $RUN_NUM: workflow failed in $((WDIFF / 60))m, $((WDIFF % 60))s"
+            bash tg_utils.sh msg "$(find kernel/out -type f -name '*Image*')"
+            bash tg_utils.sh msg "$(find kernel/out -type f -iname '*dtb*')"
         - name: end of workflow
           run: |
             WORKFLOW_END=$(date +"%s")

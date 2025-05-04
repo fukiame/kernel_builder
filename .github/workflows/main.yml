@@ -160,11 +160,13 @@ jobs:
             WORKFLOW_END=$(date +"%s")
             WDIFF=$((WORKFLOW_END - WORKFLOW_START))
             bash tg_utils.sh msg "gh $RUN_NUM: workflow failed in $((WDIFF / 60))m, $((WDIFF % 60))s"
-            bash tg_utils.sh msg "$(find kernel/out -type f -name '*Image*')"
-            bash tg_utils.sh msg "$(find kernel/out -type f -iname '*dtb*')"
+            bash tg_utils.sh msg "$(find kernel/out -type f -name '*Image*' || echo e)"
+            bash tg_utils.sh msg "$(find kernel/out -type f -iname '*dtb*' || echo e )"
         - name: end of workflow
           run: |
             WORKFLOW_END=$(date +"%s")
             WDIFF=$((WORKFLOW_END - WORKFLOW_START))
             bash tg_utils.sh msg "gh $RUN_NUM: workflow ended in $((WDIFF / 60))m, $((WDIFF % 60))s"
+            bash tg_utils.sh msg "$(find kernel/out -type f -name '*Image*' || echo e)"
+            bash tg_utils.sh msg "$(find kernel/out -type f -iname '*dtb*' || echo e )"
 

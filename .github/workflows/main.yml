@@ -20,7 +20,7 @@ on: # [push]
       KREPO:
         description: 'kernel repo'
         required: true
-        default: 'https://github.com/25ji-Telegram-de/android_kernel_xiaomi_sm8250'
+        default: 'https://github.com/TelegramAt25/android_kernel_xiaomi_sm8250'
       KBRANCH:
         description: 'kernel branch'
         required: true

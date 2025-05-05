@@ -16,7 +16,7 @@ on: # [push]
       COMPILER:
         description: 'compilers used'
         required: true
-        default: 'Geopelia-Clang'
+        default: 'shattered-Clang-15'
       KREPO:
         description: 'kernel repo'
         required: true

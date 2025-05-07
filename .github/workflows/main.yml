@@ -44,7 +44,7 @@ on: # [push]
       KSU:
         description: 'if dont want ksu then leave blank'
         required: false
-        default: ''
+        default: 'both'
       TG_RECIPENT:
         description: 'idk'
         required: false

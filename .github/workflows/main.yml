@@ -44,7 +44,7 @@ on: # [push]
       KSU:
         description: 'if dont want ksu then leave blank'
         required: false
-        default: 'all'
+        default: 'sus'
       TG_RECIPENT:
         description: 'idk'
         required: false
@@ -119,23 +119,17 @@ jobs:
           run: |
             cd kernel
             case $PATCH_KSU in
-              "all" )
-                bash ../tg_utils.sh msg "gh $RUN_NUM: running compilation script(s): $COMPILERS"
-                bash ../build.sh "$COMPILERS"
-                bash ../tg_utils.sh msg "gh $RUN_NUM: KernelSU patching enabled, patching"
-                bash ../ksu/applyPatches.sh
-                bash ../tg_utils.sh msg "gh $RUN_NUM: running compilation script(s): $COMPILERS"
-                bash ../build.sh "$COMPILERS"
-                bash ../tg_utils.sh msg "gh $RUN_NUM: SusFS patching enabled, patching"
-                bash ../ksu/asus.sh
-                bash ../tg_utils.sh msg "gh $RUN_NUM: running compilation script(s): $COMPILERS"
-                bash ../build.sh "$COMPILERS"
-              ;;
               "both" )
                 bash ../tg_utils.sh msg "gh $RUN_NUM: running compilation script(s): $COMPILERS"
                 bash ../build.sh "$COMPILERS"
                 bash ../tg_utils.sh msg "gh $RUN_NUM: KernelSU patching enabled, patching"
                 bash ../ksu/applyPatches.sh
+                bash ../tg_utils.sh msg "gh $RUN_NUM: running compilation script(s): $COMPILERS"
+                bash ../build.sh "$COMPILERS"
+              ;;
+              "sus" )
+                bash ../tg_utils.sh msg "gh $RUN_NUM: KernelSU + SuSFS patching enabled, patching"
+                bash ../ksu/asus.sh
                 bash ../tg_utils.sh msg "gh $RUN_NUM: running compilation script(s): $COMPILERS"
                 bash ../build.sh "$COMPILERS"
               ;;

@@ -25,7 +25,7 @@ pack() {
   if [ -e ${maindir}/banner_append ]; then
     cat ${maindir}/banner_append >> ${zipper}/banner
     if grep KernelSU ${maindir}/banner_append ; then
-      sed -i 's/do.skipmagisk=0/do.skipmagisk=1/g' ${zipper}/anykernel.sh || :
+      sed -i 's/#NO_MAGISK/NO_MAGISK/g' ${zipper}/anykernel.sh || :
     fi
   fi
   zip -r9 "$1" ./* -x .git README.md ./*placeholder

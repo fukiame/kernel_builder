@@ -119,6 +119,18 @@ jobs:
           run: |
             cd kernel
             case $PATCH_KSU in
+              "all" )
+                bash ../tg_utils.sh msg "gh $RUN_NUM: running compilation script(s): $COMPILERS"
+                bash ../build.sh "$COMPILERS"
+                bash ../tg_utils.sh msg "gh $RUN_NUM: KernelSU patching enabled, patching"
+                bash ../ksu/applyPatches.sh
+                bash ../tg_utils.sh msg "gh $RUN_NUM: running compilation script(s): $COMPILERS"
+                bash ../build.sh "$COMPILERS"
+                bash ../tg_utils.sh msg "gh $RUN_NUM: SusFS patching enabled, patching"
+                bash ../ksu/asus.sh
+                bash ../tg_utils.sh msg "gh $RUN_NUM: running compilation script(s): $COMPILERS"
+                bash ../build.sh "$COMPILERS"
+              ;;
               "both" )
                 bash ../tg_utils.sh msg "gh $RUN_NUM: running compilation script(s): $COMPILERS"
                 bash ../build.sh "$COMPILERS"

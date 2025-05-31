@@ -24,7 +24,7 @@ on: # [push]
       KBRANCH:
         description: 'kernel branch'
         required: true
-        default: 'lineage-22.2'
+        default: 'rekang'
       NOTES:
         description: 'notes to print out'
         required: false

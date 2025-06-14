@@ -18,7 +18,7 @@ case $1 in
 
   "build" )
     export PATH="$gcc64/bin:$gcc/bin:/usr/bin:${PATH}"
-    make -j$(nproc --all) O=out ARCH=arm64 SUBARCH=arm64 $2
+    make -j$(nproc --all) O=out ARCH=arm SUBARCH=arm $2
     make -j$(nproc --all) O=out \
       CROSS_COMPILE="aarch64-linux-android-" \
       CROSS_COMPILE_ARM32="arm-linux-androideabi-" \

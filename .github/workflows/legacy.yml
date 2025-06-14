@@ -16,11 +16,11 @@ on: # [push]
       KREPO:
         description: 'kernel repo'
         required: true
-        default: 'TelegramAt25/kernel_oppo_msm8939'
+        default: 'TelegramAt25/android_kernel_samsung_coreprimeve3g'
       KBRANCH:
         description: 'kernel branch'
         required: true
-        default: 'niigo'
+        default: 'cm-14.1'
       NOTES:
         description: 'notes to print out'
         required: false

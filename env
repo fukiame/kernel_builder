@@ -7,12 +7,12 @@ export outside="${maindir}/.."
 
 #
 
-export ARCH="arm64"
-export SUBARCH="arm64"
+export ARCH="arm"
+export SUBARCH="arm"
 export KBUILD_BUILD_USER="nijuugo-ji"
 export KBUILD_BUILD_HOST="telegram-de"
 
-export defconfig="a37f_defconfig"
+export defconfig="cyanogen_coreprimeve3g_defconfig"
 
 if [[ -z "$zipper_repo" ]]; then
   export zipper_repo=fukiame/a37f_ak3

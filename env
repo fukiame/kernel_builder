@@ -15,10 +15,10 @@ export KBUILD_BUILD_HOST="telegram-de"
 export defconfig="lineageos_bullhead_defconfig"
 
 if [[ -z "$zipper_repo" ]]; then
-  export zipper_repo=fukiame/bullhead_ak3
+  export zipper_repo=fukiame/ak3_bullhead
 fi
 if [[ -z "$zipper_branch" ]]; then
-  export zipper_branch=blank
+  export zipper_branch=bagel
 fi
 
 export out_image="${maindir}/out/arch/${ARCH}/boot/Image"

@@ -16,15 +16,15 @@ on: # [push]
       COMPILER:
         description: 'compilers used'
         required: true
-        default: 'Geopelia-Clang'
+        default: 'shattered-Clang-15'
       KREPO:
         description: 'kernel repo'
         required: true
-        default: 'https://github.com/25ji-Telegram-de/android_kernel_xiaomi_selene'
+        default: 'https://github.com/TelegramAt25/android_kernel_lge_bullhead'
       KBRANCH:
         description: 'kernel branch'
         required: true
-        default: 'lumi'
+        default: 'bagel'
       NOTES:
         description: 'notes to print out'
         required: false
@@ -44,7 +44,7 @@ on: # [push]
       KSU:
         description: 'if dont want ksu then leave blank'
         required: false
-        default: 'both'
+        default: ''
       TG_RECIPENT:
         description: 'idk'
         required: false

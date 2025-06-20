@@ -12,7 +12,7 @@ export SUBARCH="arm64"
 export KBUILD_BUILD_USER="nijuugo-ji"
 export KBUILD_BUILD_HOST="telegram-de"
 
-export defconfig="lineageos_bullhead_defconfig"
+export defconfig="bullhead_defconfig"
 
 if [[ -z "$zipper_repo" ]]; then
   export zipper_repo=fukiame/ak3_bullhead

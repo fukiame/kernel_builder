@@ -22,7 +22,6 @@ if [[ -z "$zipper_branch" ]]; then
 fi
 
 export out_image="${maindir}/out/arch/${ARCH}/boot/Image"
-export out_dt="${maindir}/out/arch/${ARCH}/boot/dts/dt.img"
 
 export zipper="${outside}/zipper"
 

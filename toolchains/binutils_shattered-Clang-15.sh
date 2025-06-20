@@ -1,0 +1,35 @@
+#!/bin/bash
+
+maindir="$(pwd)"
+outside="${maindir}/.."
+
+dir="${outside}/shatteredClang15"
+
+case $1 in
+  "setup" )
+    # Clone compiler
+    if [[ ! -d "${dir}" ]]; then
+      mkdir ${dir} && cd ${dir}
+      curl -Lo a.tar.gz "https://github.com/erabye/shattered-clang/releases/download/shattered-Clang-15.0.7/shattered-Clang-15.0.7.tar.gz"
+      tar -zxf a.tar.gz
+    fi
+  ;;
+
+  "build" )
+    export PATH="${dir}/bin:/usr/bin:${PATH}"
+    export bin64="aarch64-linux-gnu"
+    export bin32="arm-linux-gnueabi"
+    make -j$NJOBS O=out CC=clang ARCH=arm64 SUBARCH=arm64 $2
+    make -j$NJOBS O=out \
+      CROSS_COMPILE="$bin64-" \
+      CROSS_COMPILE_ARM32="$bin32-" \
+      CROSS_COMPILE_COMPAT="$bin32-" \
+      CC=clang \
+      LD="$bin64-ld" \
+      LDGOLD="$bin64-ld.gold" \
+      HOSTLD="$dir/bin/ld" \
+      LDCOMPAT="$dir/bin/$bin32-ld" \
+      2>&1 | tee ${CUR_TOOLCHAIN}.log
+    sh ${outside}/ver_toolchain.sh clang ld.lld > ${CUR_TOOLCHAIN}.info
+  ;;
+esac

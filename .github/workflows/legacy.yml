@@ -20,7 +20,7 @@ on: # [push]
       KBRANCH:
         description: 'kernel branch'
         required: true
-        default: 'bagel'
+        default: '2bagel'
       NOTES:
         description: 'notes to print out'
         required: false

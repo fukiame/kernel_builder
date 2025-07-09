@@ -20,7 +20,7 @@ pack() {
     git reset --hard origin/${zipper_branch}
   fi
   cp -af "${out_image}" "${zipper}"
-  cp -af "${out_dtb}" "${zipper}/dtb"
+  [ -n "${out_dtb}" ] && cp -af "${out_dtb}" "${zipper}/dtb"
   [ -n "${out_dtbo}" ] && cp -af "${out_dtbo}" "${zipper}/dtbo.img"
   if [ -e ${maindir}/banner_append ]; then
     cat ${maindir}/banner_append >> ${zipper}/banner

@@ -1,0 +1,46 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: sidex15 <24408329+sidex15@users.noreply.github.com>
+Date: Thu, 24 Jul 2025 14:30:19 +0800
+Subject: [PATCH 5/5] [PATCH 5/5] fs: susfs: Make sus_mounts invisible only for
+ apps that have sus_mounts umounted
+
+- There are two situations only now:
+  1. if "ksu_susfs hide_sus_mnts_for_all_procs 1" is set(default 1 in kernel), all processes will NOT see any sus mounts in mountinfo
+  2. if "ksu_susfs hide_sus_mnts_for_all_procs 0" is set, all processes that have NO sus_mounts umounted can still see the sus_mounts, and vice versa, processes that have sus_mounts umounted will NOT see any sus_mounts.
+
+- Make sure "ksu_susfs hide_sus_mnts_for_all_procs 0" is executed only after post-fs-data.sh.
+---
+ fs/proc_namespace.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index 5f35aba40730..5ad5fe7767d5 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -111,7 +111,7 @@ static int show_vfsmnt(struct seq_file *m, struct vfsmount *mnt)
+ 	int err;
+ 
+ #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
+-	if (unlikely(r->mnt_id >= DEFAULT_SUS_MNT_ID)&&(susfs_hide_sus_mnts_for_all_procs || !susfs_is_current_ksu_domain()))
++	if (susfs_hide_sus_mnts_for_all_procs && r->mnt_id >= DEFAULT_SUS_MNT_ID)
+ 		return 0;
+ #endif
+ 
+@@ -152,7 +152,7 @@ static int show_mountinfo(struct seq_file *m, struct vfsmount *mnt)
+ 	int err;
+ 
+ #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
+-	if (unlikely(r->mnt_id >= DEFAULT_SUS_MNT_ID)&&(susfs_hide_sus_mnts_for_all_procs || !susfs_is_current_ksu_domain()))
++	if (susfs_hide_sus_mnts_for_all_procs && r->mnt_id >= DEFAULT_SUS_MNT_ID)
+ 		return 0;
+ #endif
+ 
+@@ -221,7 +221,7 @@ static int show_vfsstat(struct seq_file *m, struct vfsmount *mnt)
+ 	int err;
+ 
+ #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
+-	if (unlikely(r->mnt_id >= DEFAULT_SUS_MNT_ID)&&(susfs_hide_sus_mnts_for_all_procs || !susfs_is_current_ksu_domain()))
++	if (susfs_hide_sus_mnts_for_all_procs && r->mnt_id >= DEFAULT_SUS_MNT_ID)
+ 		return 0;
+ #endif
+ 

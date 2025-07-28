@@ -6,7 +6,7 @@ export maindir="$(pwd)"
 export outside="${maindir}/.."
 source "${outside}/$1env"
 
-curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/refs/heads/main/kernel/setup.sh" | bash -s susfs-v1.5.7
+curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/refs/heads/main/kernel/setup.sh" | bash -s susfs-main
 git add . && git commit -am "drivers: KernelSU"
 KSU_git_ver=$(cd KernelSU && git rev-list --count HEAD)
 KSU_ver=$(($KSU_git_ver + 10000 + 200))

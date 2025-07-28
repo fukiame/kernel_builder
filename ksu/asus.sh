@@ -6,7 +6,7 @@ export maindir="$(pwd)"
 export outside="${maindir}/.."
 source "${outside}/$1env"
 
-curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/refs/heads/main/kernel/setup.sh" | bash -s susfs-v1.5.7
+curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/refs/heads/main/kernel/setup.sh" | bash -s staging/susfs-main
 git add . && git commit -am "drivers: KernelSU"
 KSU_git_ver=$(cd KernelSU && git rev-list --count HEAD)
 KSU_ver=$(($KSU_git_ver + 10000 + 200))
@@ -36,6 +36,6 @@ sed -i "s/\(CONFIG_LOCALVERSION=\)\(.*\)/\1\"-${kernel_name}-ks${KSU_ver}sus\"/"
 
 echo "$(grep 'CONFIG_LOCALVERSION=' ${defconfig_file})"
 
-echo -e " \nincludes backslashxx's KernelSU fork, ver ${KSU_ver}" >> banner_append
-echo -e " \nincludes SuSFS v1.5.8" >> banner_append
+echo -e " \nincludes rsuntk's KernelSU fork, ver ${KSU_ver}" >> banner_append
+echo -e " \nincludes SuSFS v1.5.9" >> banner_append
 

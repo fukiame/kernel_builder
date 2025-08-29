@@ -1299,7 +1299,7 @@ index 81882a13212d..63c897de86e7 100644
  	show_fd_locks(m, file, files);
  	if (seq_has_overflowed(m))
 diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index bc274b173a93..bf3a3e0fd388 100644
+index 1f626270c18a..ed24ab87aff7 100644
 --- a/fs/proc/task_mmu.c
 +++ b/fs/proc/task_mmu.c
 @@ -21,6 +21,9 @@
@@ -1312,8 +1312,8 @@ index bc274b173a93..bf3a3e0fd388 100644
  
  #include <asm/elf.h>
  #include <asm/tlb.h>
-@@ -508,6 +511,10 @@ static void show_vma_header_prefix_fake(struct seq_file *m,
- 		    MAJOR(dev), MINOR(dev), ino);
+@@ -491,6 +494,10 @@ static int show_vma_header_prefix(struct seq_file *m, unsigned long start,
+ 	return 0;
  }
  
 +#ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
@@ -1323,7 +1323,7 @@ index bc274b173a93..bf3a3e0fd388 100644
  static void
  show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
  {
-@@ -522,8 +529,17 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
+@@ -505,8 +512,17 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
  
  	if (file) {
  		struct inode *inode = file_inode(vma->vm_file);
@@ -1339,8 +1339,8 @@ index bc274b173a93..bf3a3e0fd388 100644
 +bypass_orig_flow:
 +#endif
  		pgoff = ((loff_t)vma->vm_pgoff) << PAGE_SHIFT;
- 		struct dentry *dentry = file->f_path.dentry;
- 		if (dentry) {
+ 	}
+ 
 diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
 index bd07f0f4f06b..f12d5b1cff1a 100644
 --- a/fs/proc_namespace.c

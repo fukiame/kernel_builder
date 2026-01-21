@@ -16,7 +16,7 @@ on: # [push]
       COMPILER:
         description: 'compilers used'
         required: true
-        default: 'Geopelia-Clang-21'
+        default: 'Geopelia-Clang'
       KREPO:
         description: 'kernel repo'
         required: true

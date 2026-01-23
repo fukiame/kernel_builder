@@ -37,6 +37,10 @@ on: # [push]
         description: 'zipper branch'
         required: false
         default: ''
+      DEFCONFIG:
+        description: 'defconfig'
+        required: false
+        default: ''
       KSU:
         description: 'if dont want ksu then leave blank'
         required: false
@@ -58,6 +62,7 @@ env:
   SUFFIX: ${{ github.event.inputs.SUFFIX }}
   zipper_repo: ${{ github.event.inputs.ZREPO }}
   zipper_branch: ${{ github.event.inputs.ZBRANCH }}
+  defconfig: ${{ github.event.inputs.DEFCONFIG }}
   TZ: Asia/Ho_Chi_Minh
 
 jobs:

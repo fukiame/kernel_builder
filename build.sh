@@ -22,6 +22,7 @@ pack() {
   cp -af "${out_image}" "${zipper}"
   [ -n "${out_dtb}" ] && cp -af "${out_dtb}" "${zipper}/dtb"
   [ -n "${out_dtbo}" ] && cp -af "${out_dtbo}" "${zipper}/dtbo.img"
+  sed -i "s|SEDHERE|$sedre|g" "${zipper}/banner" "${zipper}/anykernel.sh"
   if [ -e ${maindir}/banner_append ]; then
     cat ${maindir}/banner_append >> ${zipper}/banner
     if grep KernelSU ${maindir}/banner_append ; then

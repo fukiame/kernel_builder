@@ -22,6 +22,8 @@ if [[ -z "$zipper_branch" ]]; then
   export zipper_branch=aster
 fi
 
+export sedar="$(echo $defconfig | cut -d'_' -f2)"
+
 export out_image="${maindir}/out/arch/${ARCH}/boot/Image.gz-dtb"
 #export out_dtb="${maindir}/out/arch/${ARCH}/boot/dts/mediatek/mt6765.dtb"
 export out_dtbo="${maindir}/out/arch/${ARCH}/boot/dtbo.img"

@@ -41,6 +41,10 @@ on: # [push]
         description: 'zipper branch'
         required: false
         default: ''
+      DEFCONFIG:
+        description: 'defconfig'
+        required: false
+        default: ''
       KSU:
         description: 'if dont want ksu then leave blank'
         required: false
@@ -49,10 +53,6 @@ on: # [push]
         description: 'idk'
         required: false
         default: ''
-      CONTAINER:
-        description: 'if you know you know'
-        required: true
-        default: 'fedora:40'
 
 env:
   BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
@@ -66,13 +66,14 @@ env:
   SUFFIX: ${{ github.event.inputs.SUFFIX }}
   zipper_repo: ${{ github.event.inputs.ZREPO }}
   zipper_branch: ${{ github.event.inputs.ZBRANCH }}
+  defconfig: ${{ github.event.inputs.DEFCONFIG }}
   TZ: Asia/Ho_Chi_Minh
 
 jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: ${{ github.event.inputs.CONTAINER }}
+      image: 'fedora:40'
 
     steps:
         - name: checkout

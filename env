@@ -12,8 +12,9 @@ export SUBARCH="arm64"
 export KBUILD_BUILD_USER="nijuugo-ji"
 export KBUILD_BUILD_HOST="telegram-de"
 
-export defconfig="lineageos_judypn_defconfig"
-
+if [[ -z "$defconfig" ]]; then
+  export defconfig="lineageos_judypn_defconfig"
+fi
 if [[ -z "$zipper_repo" ]]; then
   export zipper_repo="https://github.com/fukiame/AnyKernel3-niigo"
 fi

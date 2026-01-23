@@ -19,7 +19,7 @@ if [[ -z "$zipper_repo" ]]; then
   export zipper_repo="https://github.com/fukiame/AnyKernel3-niigo"
 fi
 if [[ -z "$zipper_branch" ]]; then
-  export zipper_branch=aster
+  export zipper_branch=strahv
 fi
 
 export sedar="$(echo $defconfig | cut -d'_' -f2)"

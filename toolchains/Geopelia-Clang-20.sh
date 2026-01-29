@@ -10,7 +10,7 @@ case $1 in
     # Clone compiler
     if [[ ! -d "${dir}" ]]; then
       mkdir ${dir} && cd ${dir}
-      curl -Lo a.tar.gz "https://github.com/fukiame/Geopelia-Clang/releases/download/Geopelia-Clang-20.1.8/Geopelia-Clang-20.1.8.tar.gz"
+      curl -Lo a.tar.gz "https://github.com/fukiame/tc_builds/releases/download/Geopelia-Clang-20.1.8/Geopelia-Clang-20.1.8.tar.gz"
       tar -zxf a.tar.gz
     fi
   ;;

@@ -3,7 +3,7 @@
 maindir="$(pwd)"
 outside="${maindir}/.."
 
-dir="${outside}/GeopeliaClang21"
+dir="${outside}/fleurixClang12"
 
 case $1 in
   "setup" )

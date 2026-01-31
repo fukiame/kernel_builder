@@ -1,4 +1,4 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From 685a637ca37b9221824ee4e5fc8f828eba588db3 Mon Sep 17 00:00:00 2001
 From: backslashxx <118538522+backslashxx@users.noreply.github.com>
 Date: Sat, 22 Feb 2025 22:37:25 +0800
 Subject: [PATCH] KernelSU: integrate scope-minimized manual hooks v1.8 -
@@ -22,12 +22,19 @@ This commit is a squash of the following:
 
 Signed-off-by: backslashxx <118538522+backslashxx@users.noreply.github.com>
 Signed-off-by: fukiame <fukiame@proton.me>
+---
+ fs/exec.c                | 12 ++++++++++++
+ fs/open.c                |  9 +++++++++
+ fs/stat.c                | 13 +++++++++++++
+ kernel/reboot.c          |  8 ++++++++
+ security/selinux/hooks.c | 10 ++++++++++
+ 5 files changed, 52 insertions(+)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index 5e70e03dfd82070960e8adb09954fb084960a9b6..5e443ccd10c607822005811553ac62096c04ed37 100644
+index 5addf3b00561..70ff34003363 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1844,12 +1844,21 @@ static int do_execveat_common(int fd, struct filename *filename,
+@@ -1837,12 +1837,21 @@ static int do_execveat_common(int fd, struct filename *filename,
  	return retval;
  }
  
@@ -49,7 +56,7 @@ index 5e70e03dfd82070960e8adb09954fb084960a9b6..5e443ccd10c607822005811553ac6209
  	return do_execveat_common(AT_FDCWD, filename, argv, envp, 0);
  }
  
-@@ -1877,6 +1886,9 @@ static int compat_do_execve(struct filename *filename,
+@@ -1870,6 +1879,9 @@ static int compat_do_execve(struct filename *filename,
  		.is_compat = true,
  		.ptr.compat = __envp,
  	};
@@ -60,7 +67,7 @@ index 5e70e03dfd82070960e8adb09954fb084960a9b6..5e443ccd10c607822005811553ac6209
  }
  
 diff --git a/fs/open.c b/fs/open.c
-index fdc65536208ed993df0d0c77fcfde79a58b1c825..b46695fd4d3edae2c9791604c921a7bd1a9396bb 100644
+index f2b82c462fbb..0b19f2b6a6ea 100644
 --- a/fs/open.c
 +++ b/fs/open.c
 @@ -355,6 +355,11 @@ SYSCALL_DEFINE4(fallocate, int, fd, int, mode, loff_t, offset, loff_t, len)
@@ -87,7 +94,7 @@ index fdc65536208ed993df0d0c77fcfde79a58b1c825..b46695fd4d3edae2c9791604c921a7bd
  		return -EINVAL;
  
 diff --git a/fs/stat.c b/fs/stat.c
-index 82b61b66e1c649029daa1e9e1245cb6752d00cb9..8c96f884b8eb4f2b701fce2f59718c5bbd7f308b 100644
+index 82b61b66e1c6..8c96f884b8eb 100644
 --- a/fs/stat.c
 +++ b/fs/stat.c
 @@ -350,6 +350,11 @@ SYSCALL_DEFINE2(newlstat, const char __user *, filename,
@@ -125,7 +132,7 @@ index 82b61b66e1c649029daa1e9e1245cb6752d00cb9..8c96f884b8eb4f2b701fce2f59718c5b
  	if (error)
  		return error;
 diff --git a/kernel/reboot.c b/kernel/reboot.c
-index 01df16334a514a618aea47b2e96e89e3ae1d33ff..21e903fe7c2789da07b3654642314a0a2f56f2a6 100644
+index 01df16334a51..21e903fe7c27 100644
 --- a/kernel/reboot.c
 +++ b/kernel/reboot.c
 @@ -291,6 +291,11 @@ static DEFINE_MUTEX(reboot_mutex);
@@ -151,10 +158,10 @@ index 01df16334a514a618aea47b2e96e89e3ae1d33ff..21e903fe7c2789da07b3654642314a0a
  	if (!ns_capable(pid_ns->user_ns, CAP_SYS_BOOT))
  		return -EPERM;
 diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index a9cdd4e50f128a99effb0127026d2f0b70102113..79941266a938d3b92406198f50d1d77189fa7a2b 100644
+index 4abba0e1674d..07bafbfe8d00 100644
 --- a/security/selinux/hooks.c
 +++ b/security/selinux/hooks.c
-@@ -2299,6 +2299,11 @@ static u32 ptrace_parent_sid(void)
+@@ -2314,6 +2314,11 @@ static u32 ptrace_parent_sid(struct task_struct *task)
  	return sid;
  }
  
@@ -166,7 +173,7 @@ index a9cdd4e50f128a99effb0127026d2f0b70102113..79941266a938d3b92406198f50d1d771
  static int check_nnp_nosuid(const struct linux_binprm *bprm,
  			    const struct task_security_struct *old_tsec,
  			    const struct task_security_struct *new_tsec)
-@@ -2314,6 +2319,11 @@ static int check_nnp_nosuid(const struct linux_binprm *bprm,
+@@ -2328,6 +2333,11 @@ static int check_nnp_nosuid(const struct linux_binprm *bprm,
  	if (new_tsec->sid == old_tsec->sid)
  		return 0; /* No change in credentials */
  
@@ -176,5 +183,8 @@ index a9cdd4e50f128a99effb0127026d2f0b70102113..79941266a938d3b92406198f50d1d771
 +#endif
 +
  	/*
- 	 * If the policy enables the nnp_nosuid_transition policy capability,
- 	 * then we permit transitions under NNP or nosuid if the
+ 	 * The only transitions we permit under NNP or nosuid
+ 	 * are transitions to bounded SIDs, i.e. SIDs that are
+-- 
+2.52.0
+

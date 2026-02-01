@@ -1,0 +1,37 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: backslashxx <118538522+backslashxx@users.noreply.github.com>
+Date: Sun, 19 Oct 2025 21:52:12 +0800
+Subject: [PATCH] KernelSU, selinux/avc: add slow_avc_audit hook v2
+
+since kprobes is broken on this kernel, manual hook is needed for avc log spoofing
+
+Signed-off-by: backslashxx <118538522+backslashxx@users.noreply.github.com>
+Signed-off-by: fukiame <fukiame@proton.me>
+
+diff --git a/security/selinux/avc.c b/security/selinux/avc.c
+index 583c6c9597d496c8f1b087ba5fdd88349ea2656d..2b156eb77efb1baca2a2cb8de5b14d7533c97dfd 100644
+--- a/security/selinux/avc.c
++++ b/security/selinux/avc.c
+@@ -764,6 +764,10 @@ static void avc_audit_post_callback(struct audit_buffer *ab, void *a)
+ 			 ad->selinux_audit_data->result ? 0 : 1);
+ }
+ 
++#ifdef CONFIG_KSU
++extern int ksu_handle_slow_avc_audit_new(u32 tsid, u16 *tclass);
++#endif
++
+ /* This is the slow part of avc audit with big stack footprint */
+ noinline int slow_avc_audit(struct selinux_state *state,
+ 			    u32 ssid, u32 tsid, u16 tclass,
+@@ -776,6 +780,11 @@ noinline int slow_avc_audit(struct selinux_state *state,
+ 	if (!denied)
+ 		return 0;
+ 
++#ifdef CONFIG_KSU
++	ksu_handle_slow_avc_audit_new(tsid, &tclass);
++	if (!tclass)
++		return 0;
++#endif
+ 	if (!a) {
+ 		a = &stack_data;
+ 		a->type = LSM_AUDIT_DATA_NONE;

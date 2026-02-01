@@ -16,6 +16,7 @@ if [[ -d "$patchesdir" ]]; then
   for patch_file in "$patchesdir"/*.patch ; do
     git am "$patch_file"
   done
+  echo 'CONFIG_KSU_EXTRAS=y' >> "${defconfig_file}"
 else
   echo "patching ksu failed, the kernel version you want to patch doesnt have patches here yet"
   exit 1

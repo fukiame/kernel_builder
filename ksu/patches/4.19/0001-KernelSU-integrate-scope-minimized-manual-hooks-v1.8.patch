@@ -17,7 +17,6 @@ This commit is a squash of the following:
 
 [fukiame: apply some should-have-been-kprobes'd hooks
 *	kernel/reboot: sys_reboot: ksu_handle_sys_reboot hook
-*	selinux/hooks: check_nnp_nosuid: is_ksu_transition hook
 ]
 
 Signed-off-by: backslashxx <118538522+backslashxx@users.noreply.github.com>
@@ -150,31 +149,3 @@ index 3a87fee47d3a7af2f3aab9f9ee80817573c01308..4f2b1207d9de630cfd293d77d9be774e
  	/* We only trust the superuser with rebooting the system. */
  	if (!ns_capable(pid_ns->user_ns, CAP_SYS_BOOT))
  		return -EPERM;
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index cf4170451391a1e6df93e84ce5643aaea703ff71..7bf6f1877a82494ea1c5e92dd7a3ad31e52f7061 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2444,6 +2444,11 @@ static u32 ptrace_parent_sid(void)
- 	return sid;
- }
- 
-+#ifdef CONFIG_KSU
-+extern bool is_ksu_transition(const struct task_security_struct *old_tsec,
-+				const struct task_security_struct *new_tsec);
-+#endif
-+
- static int check_nnp_nosuid(const struct linux_binprm *bprm,
- 			    const struct task_security_struct *old_tsec,
- 			    const struct task_security_struct *new_tsec)
-@@ -2480,6 +2485,11 @@ static int check_nnp_nosuid(const struct linux_binprm *bprm,
- 	}
- #endif
- 
-+#ifdef CONFIG_KSU
-+	if (is_ksu_transition(old_tsec, new_tsec))
-+		return 0;
-+#endif
-+
- 	/*
- 	 * If the policy enables the nnp_nosuid_transition policy capability,
- 	 * then we permit transitions under NNP or nosuid if the

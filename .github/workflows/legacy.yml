@@ -20,11 +20,11 @@ on: # [push]
       KREPO:
         description: 'kernel repo'
         required: true
-        default: 'TelegramAt25/android_kernel_xiaomi_selene'
+        default: 'TelegramAt25/android_kernel_samsung_exynos7870'
       KBRANCH:
         description: 'kernel branch'
         required: true
-        default: 'niigo'
+        default: 'aosp_snowloop-rb'
       NOTES:
         description: 'notes to print out'
         required: false

@@ -18,6 +18,8 @@ case $1 in
 
   "build" )
     export PATH="$gcc64/bin:$gcc/bin:/usr/bin:${PATH}"
+    export ANDROID_MAJOR_VERSION=q
+    export ANDROID_PLATFORM_VERSION=10
     make -j$(nproc --all) O=out ARCH=arm64 SUBARCH=arm64 $2
     make -j$(nproc --all) O=out \
       CROSS_COMPILE="aarch64-linux-android-" \

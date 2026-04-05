@@ -20,11 +20,11 @@ on: # [push]
       KREPO:
         description: 'kernel repo'
         required: true
-        default: 'https://github.com/TelegramAt25/android_kernel_xiaomi_sm8250'
+        default: 'https://github.com/AstideLabs/android_kernel_xiaomi_sm8250'
       KBRANCH:
         description: 'kernel branch'
         required: true
-        default: 'rererere'
+        default: 'android16-aptusitu-new'
       NOTES:
         description: 'notes to print out'
         required: false
@@ -44,7 +44,7 @@ on: # [push]
       KSU:
         description: 'if dont want ksu then leave blank'
         required: false
-        default: 'sus'
+        default: 'e'
       TG_RECIPENT:
         description: 'idk'
         required: false

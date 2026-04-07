@@ -20,11 +20,11 @@ on: # [push]
       KREPO:
         description: 'kernel repo'
         required: true
-        default: 'https://github.com/AstideLabs/android_kernel_xiaomi_sm8250'
+        default: 'https://github.com/15168142/kernel_xiaomi_sm8250'
       KBRANCH:
         description: 'kernel branch'
         required: true
-        default: 'android16-aptusitu-new'
+        default: 'main'
       NOTES:
         description: 'notes to print out'
         required: false

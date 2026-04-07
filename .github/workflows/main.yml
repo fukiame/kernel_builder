@@ -16,7 +16,7 @@ on: # [push]
       COMPILER:
         description: 'compilers used'
         required: true
-        default: 'shattered-Clang-15'
+        default: 'AOSP-Clang-14'
       KREPO:
         description: 'kernel repo'
         required: true

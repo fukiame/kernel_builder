@@ -12,7 +12,7 @@ export SUBARCH="arm64"
 export KBUILD_BUILD_USER="nijuugo-ji"
 export KBUILD_BUILD_HOST="telegram-de"
 
-export defconfig="ginkgo_defconfig"
+export defconfig="xiaomi-trinket-droidspaces-ksu_defconfig"
 
 if [[ -z "$zipper_repo" ]]; then
   export zipper_repo="https://github.com/fukiame/AnyKernel3-niigo"

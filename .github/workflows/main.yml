@@ -16,15 +16,15 @@ on: # [push]
       COMPILER:
         description: 'compilers used'
         required: true
-        default: 'Geopelia-Clang-21'
+        default: 'shattered-Clang-15'
       KREPO:
         description: 'kernel repo'
         required: true
-        default: 'https://github.com/TelegramAt25/niigo_kernel_xiaomi_blossom'
+        default: 'https://github.com/t25ons/android_kernel_xiaomi_mt6785'
       KBRANCH:
         description: 'kernel branch'
         required: true
-        default: 'yoka_rb2'
+        default: 'ray'
       NOTES:
         description: 'notes to print out'
         required: false

@@ -22,7 +22,7 @@ if [[ -z "$zipper_branch" ]]; then
 fi
 
 export out_image="${maindir}/out/arch/${ARCH}/boot/Image.gz-dtb"
-export out_dtb="${maindir}/out/arch/${ARCH}/boot/dts/mediatek/mt6768.dtb"
+export out_dtb="${maindir}/out/arch/${ARCH}/boot/dts/mediatek/mt6785.dtb"
 export out_dtbo="${maindir}/out/arch/${ARCH}/boot/dtbo.img"
 
 export zipper="${outside}/zipper"

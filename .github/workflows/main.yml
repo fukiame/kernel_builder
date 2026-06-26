@@ -16,7 +16,7 @@ on: # [push]
       COMPILER:
         description: 'compilers used'
         required: true
-        default: 'Geopelia-Clang-21'
+        default: 'shattered-Clang-15'
       KREPO:
         description: 'kernel repo'
         required: true
@@ -24,7 +24,7 @@ on: # [push]
       KBRANCH:
         description: 'kernel branch'
         required: true
-        default: 'yoka_rb2'
+        default: 'yoka_rb3'
       NOTES:
         description: 'notes to print out'
         required: false

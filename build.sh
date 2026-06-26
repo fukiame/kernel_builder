@@ -58,13 +58,13 @@ for toolchain in $1; do
       echo "signed by <code>apksigner sign --min-sdk-version 30 --key $SIGN_PK8 --cert $SIGN_PEM</code>" >> "${zip_name}.info"
     fi
 
-    echo "build succeeded in $((DIFF / 60))m, $((DIFF % 60))s" > "${toolchain}.log.info"
-    echo "ak3 zip file: <code>${zip_name}</code>" >> "${toolchain}.log.info"
-    echo "compiler: $(cat ${toolchain}.info)" >> "${toolchain}.log.info"
+    echo "build succeeded in $((DIFF / 60))m, $((DIFF % 60))s" > "${toolchain}-${TIME}.log.info"
+    echo "ak3 zip file: <code>${zip_name}</code>" >> "${toolchain}-${TIME}.log.info"
+    echo "compiler: $(cat ${toolchain}.info)" >> "${toolchain}-${TIME}.log.info"
   else
     BUILD_END=$(date +"%s")
     DIFF=$((BUILD_END - BUILD_START))
-    echo "build failed in $((DIFF / 60))m, $((DIFF % 60))s" > "${toolchain}.log.info"
-    echo "compiler: $(cat ${toolchain}.info)" >> "${toolchain}.log.info"
+    echo "build failed in $((DIFF / 60))m, $((DIFF % 60))s" > "${toolchain}-${TIME}.log.info"
+    echo "compiler: $(cat ${toolchain}.info)" >> "${toolchain}-${TIME}.log.info"
   fi
 done

@@ -31,7 +31,7 @@ case $1 in
       LDGOLD="$bin64-ld.gold" \
       HOSTLD="$dir/bin/ld" \
       LDCOMPAT="$dir/bin/$bin32-ld" \
-      2>&1 | tee ${CUR_TOOLCHAIN}.log
+      2>&1 | tee "${CUR_TOOLCHAIN}-${TIME}.log"
     sh ${outside}/ver_toolchain.sh clang ld > ${CUR_TOOLCHAIN}.info
   ;;
 esac

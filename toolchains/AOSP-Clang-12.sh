@@ -32,7 +32,7 @@ case $1 in
       LD_LIBRARY_PATH="$clang/lib64:$LD_LIBRABRY_PATH" \
       CC=clang \
       LD=ld.lld \
-      2>&1 | tee ${CUR_TOOLCHAIN}.log
+      2>&1 | tee "${CUR_TOOLCHAIN}-${TIME}.log"
     sh ${outside}/ver_toolchain.sh clang ld.lld > ${CUR_TOOLCHAIN}.info
   ;;
 esac

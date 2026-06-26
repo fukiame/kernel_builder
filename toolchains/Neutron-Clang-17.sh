@@ -37,7 +37,7 @@ case $1 in
       HOSTCXX=clang++ \
       HOSTLD=ld.lld \
       HOSTAR=llvm-ar \
-      2>&1 | tee ${CUR_TOOLCHAIN}.log
+      2>&1 | tee "${CUR_TOOLCHAIN}-${TIME}.log"
     sh ${outside}/ver_toolchain.sh clang ld.lld > ${CUR_TOOLCHAIN}.info
   ;;
 esac

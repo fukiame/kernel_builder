@@ -34,7 +34,7 @@ case $1 in
       OBJDUMP=aarch64-elf-objdump \
       OBJCOPY=aarch64-elf-objcopy \
       CC=aarch64-elf-gcc \
-      2>&1 | tee ${CUR_TOOLCHAIN}.log
+      2>&1 | tee "${CUR_TOOLCHAIN}-${TIME}.log"
     sh ${outside}/ver_toolchain.sh aarch64-elf-gcc aarch64-elf-ld.lld > ${CUR_TOOLCHAIN}.info
   ;;
 esac

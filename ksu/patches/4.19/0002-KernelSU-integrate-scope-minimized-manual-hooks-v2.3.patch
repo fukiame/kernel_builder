@@ -1,0 +1,125 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: backslashxx <118538522+backslashxx@users.noreply.github.com>
+Date: Sat, 22 Feb 2025 22:37:25 +0800
+Subject: [PATCH] KernelSU: integrate scope-minimized manual hooks v2.3 -
+ hybridized -k4.19
+
+This refactors original KSU hooks to replace deep kernel function hooks with targeted hooks.
+This backports KernelSU pr#1657 and having pr#2084 elements (32-bit sucompat).
+It reduces the scope of kernel function interception and still maintains full fucntionality.
+
+This commit is a squash of the following:
+*	fs/exec: __do_execve_file: ksu_handle_execveat hook
+*	fs/open: sys_faccessat: ksu_handle_faccessat hook
+*	fs/stat: sys_newfstatat: ksu_handle_stat hook
+*	fs/stat: sys_fstatat64: ksu_handle_stat hook
+*	kernel/reboot: sys_reboot: ksu_handle_sys_reboot hook
+
+Signed-off-by: backslashxx <118538522+backslashxx@users.noreply.github.com>
+Signed-off-by: fukiame <fukiame@proton.me>
+
+diff --git a/fs/exec.c b/fs/exec.c
+index 9a70a2f943d8bea896853f356211cb5d88b67bee..78780240c2fb78c342d37a4c6541a98e18af79b6 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1738,6 +1738,11 @@ static int __do_execve_file(int fd, struct filename *filename,
+ 	struct files_struct *displaced;
+ 	int retval;
+ 
++#ifdef CONFIG_KSU
++	extern int ksu_handle_execveat(int *, struct filename **, void *, void *, int *);
++	ksu_handle_execveat(&fd, &filename, &argv, &envp, &flags);
++#endif
++
+ 	if (IS_ERR(filename))
+ 		return PTR_ERR(filename);
+ 
+diff --git a/fs/open.c b/fs/open.c
+index 8c63b52d30732fef1180478e3cc3d0546bfbc8e3..2c0cfcffed6b3f96103bab31297c47b99763fe92 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -453,6 +453,10 @@ long do_faccessat(int dfd, const char __user *filename, int mode)
+ 
+ SYSCALL_DEFINE3(faccessat, int, dfd, const char __user *, filename, int, mode)
+ {
++#ifdef CONFIG_KSU
++	extern int ksu_handle_faccessat(int *, const char __user **, int *, int *);
++	ksu_handle_faccessat(&dfd, &filename, &mode, NULL);
++#endif
+ 	return do_faccessat(dfd, filename, mode);
+ }
+ 
+diff --git a/fs/stat.c b/fs/stat.c
+index 376543199b5a20b3ad976c584566bf921b601227..88483f4243951c5bd22b797a067a7314902cf454 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -360,6 +360,11 @@ SYSCALL_DEFINE4(newfstatat, int, dfd, const char __user *, filename,
+ 	struct kstat stat;
+ 	int error;
+ 
++#ifdef CONFIG_KSU
++	extern int ksu_handle_stat(int *, const char __user **, int *);
++	ksu_handle_stat(&dfd, &filename, &flag);
++#endif
++
+ 	error = vfs_fstatat(dfd, filename, &stat, flag);
+ 	if (error)
+ 		return error;
+@@ -375,6 +380,14 @@ SYSCALL_DEFINE2(newfstat, unsigned int, fd, struct stat __user *, statbuf)
+ 	if (!error)
+ 		error = cp_new_stat(&stat, statbuf);
+ 
++#if defined(CONFIG_KSU) && !defined(CONFIG_KSU_KPROBES_KSUD)
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wdeclaration-after-statement"
++	extern void ksu_handle_newfstat_ret(unsigned int *, struct stat __user **);
++	ksu_handle_newfstat_ret(&fd, &statbuf);
++#pragma GCC diagnostic pop
++#endif
++
+ 	return error;
+ }
+ 
+@@ -501,6 +514,14 @@ SYSCALL_DEFINE2(fstat64, unsigned long, fd, struct stat64 __user *, statbuf)
+ 	if (!error)
+ 		error = cp_new_stat64(&stat, statbuf);
+ 
++#if defined(CONFIG_KSU) && !defined(CONFIG_KSU_KPROBES_KSUD) // for 32-bit
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wdeclaration-after-statement"
++	extern void ksu_handle_fstat64_ret(unsigned long *, struct stat64 __user **);
++	ksu_handle_fstat64_ret(&fd, &statbuf);
++#pragma GCC diagnostic pop
++#endif
++
+ 	return error;
+ }
+ 
+@@ -510,6 +531,11 @@ SYSCALL_DEFINE4(fstatat64, int, dfd, const char __user *, filename,
+ 	struct kstat stat;
+ 	int error;
+ 
++#ifdef CONFIG_KSU // for 32-bit
++	extern int ksu_handle_stat(int *, const char __user **, int *);
++	ksu_handle_stat(&dfd, &filename, &flag);
++#endif
++
+ 	error = vfs_fstatat(dfd, filename, &stat, flag);
+ 	if (error)
+ 		return error;
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index 3a87fee47d3a7af2f3aab9f9ee80817573c01308..b5bf4e36ff4b90f783c6a4101534ac9a3d675cfc 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -312,6 +312,11 @@ SYSCALL_DEFINE4(reboot, int, magic1, int, magic2, unsigned int, cmd,
+ 	char buffer[256];
+ 	int ret = 0;
+ 
++#if defined(CONFIG_KSU) && !defined(CONFIG_KSU_KPROBES_KSUD)
++	extern int ksu_handle_sys_reboot(int, int, unsigned int, void __user **);
++	ksu_handle_sys_reboot(magic1, magic2, cmd, &arg);
++#endif
++
+ 	/* We only trust the superuser with rebooting the system. */
+ 	if (!ns_capable(pid_ns->user_ns, CAP_SYS_BOOT))
+ 		return -EPERM;

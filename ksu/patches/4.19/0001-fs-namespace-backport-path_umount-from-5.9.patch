@@ -6,10 +6,10 @@ Subject: [PATCH] fs/namespace: backport path_umount from 5.9
 Signed-off-by: fukiame <fukiame@proton.me>
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 37b016b0a2f5..42c69a5b3c34 100644
+index 5a693dbcd5c4a7a731f6d5da83deb851b5228b17..667f9c34f539d1fbf99dca446ef12cb77c2eae38 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -1645,6 +1645,40 @@ static inline bool may_mandlock(void)
+@@ -1696,6 +1696,40 @@ static inline bool may_mandlock(void)
  }
  #endif
  

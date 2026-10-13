@@ -160,14 +160,6 @@ jobs:
                 fi
               done
             fi
-
-        - uses: softprops/action-gh-release@v1
-          with:
-            tag_name: ${{ env.RUN_NUM }}
-            files: |
-              kernel/*.zip
-              kernel/*.log
-
         - name: if it fails
           if: ${{ failure() }}
           run: |

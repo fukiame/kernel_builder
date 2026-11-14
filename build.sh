@@ -31,7 +31,7 @@ pack() {
   fi
   zip -r9 "$1" ./* -x .git README.md ./*placeholder
   if apksigner version && [ -f "$SIGN_PK8" ] && [ -f "$SIGN_PEM" ] ; then
-    apksigner sign --min-sdk-version 30 --key "$SIGN_PK8" --cert "$SIGN_PEM" "$1" && SIGNED=1
+    apksigner sign --min-sdk-version 30 --key "$SIGN_PK8" --cert "$SIGN_PEM" "$1"
   fi
   rm  -f ${maindir}/banner_append "${out_image}"
   cd "${maindir}"
@@ -55,9 +55,6 @@ for toolchain in $1; do
     echo "build succeeded in $((DIFF / 60))m, $((DIFF % 60))s" > "${zip_name}.info"
     echo "md5: <code>$(md5sum "${zip_name}" | cut -d' ' -f1)</code>" >> "${zip_name}.info"
     echo "compiler: $(cat ${toolchain}.info)" >> "${zip_name}.info"
-    if [ "$SIGNED" = "1" ] ; then
-      echo "signed by apksigner --min-sdk-version 30 with <code>$SIGN_PK8</code>" >> "${zip_name}.info"
-    fi
 
     echo "build succeeded in $((DIFF / 60))m, $((DIFF % 60))s" > "${toolchain}.log.info"
     echo "ak3 zip file: <code>${zip_name}</code>" >> "${toolchain}.log.info"

@@ -152,12 +152,15 @@ jobs:
             if [[ $(ls *.zip) ]]; then
               for file in *.zip ; do
                 bash ../tg_utils.sh up "${file}" "$(cat "${file}.info")"
+                sleep 4
               done
             fi
+            sleep 4
             if [[ $(ls *.log) ]]; then
               for file in *.log ; do
                 if [ -e "${file}.info" ]; then
                   bash ../tg_utils.sh up "${file}" "$(cat "${file}.info")"
+                  sleep 4
                 fi
               done
             fi

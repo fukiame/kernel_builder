@@ -56,7 +56,7 @@ for toolchain in $1; do
     echo "md5: <code>$(md5sum "${zip_name}" | cut -d' ' -f1)</code>" >> "${zip_name}.info"
     echo "compiler: $(cat ${toolchain}.info)" >> "${zip_name}.info"
     if [ "$SIGNED" = "1" ] ; then
-      echo "signed by <code>apksigner sign --min-sdk-version 30 --key $SIGN_PK8 --cert $SIGN_PEM</code>" >> "${zip_name}.info"
+      echo "signed by apksigner --min-sdk-version 30 with <code>$SIGN_PK8</code>" >> "${zip_name}.info"
     fi
 
     echo "build succeeded in $((DIFF / 60))m, $((DIFF % 60))s" > "${toolchain}.log.info"

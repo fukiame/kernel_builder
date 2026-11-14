@@ -30,9 +30,6 @@ pack() {
     fi
   fi
   zip -r9 "$1" ./* -x .git README.md ./*placeholder
-  if apksigner version && [ -f "$SIGN_PK8" ] && [ -f "$SIGN_PEM" ] ; then
-    apksigner sign --min-sdk-version 30 --key "$SIGN_PK8" --cert "$SIGN_PEM" "$1"
-  fi
   rm  -f ${maindir}/banner_append "${out_image}"
   cd "${maindir}"
 }

@@ -20,11 +20,11 @@ on: # [push]
       KREPO:
         description: 'kernel repo'
         required: true
-        default: 'https://github.com/TelegramAt25/android_kernel_lge_sdm845'
+        default: 'https://github.com/TelegramAt25/android_kernel_lge_msm8998'
       KBRANCH:
         description: 'kernel branch'
         required: true
-        default: 'strahv'
+        default: 'msg'
       NOTES:
         description: 'notes to print out'
         required: false

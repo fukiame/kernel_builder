@@ -7,7 +7,7 @@ export maindir="$(pwd)"
 export outside="${maindir}/.."
 source "${outside}/$1env"
 
-curl -LSs "https://raw.githubusercontent.com/TelegramAt25/isotope/refs/heads/master/kernel/setup.sh" | bash -
+curl -LSs "https://raw.githubusercontent.com/TelegramAt25/idksu/refs/heads/master/kernel/setup.sh" | bash -
 git add . && git commit -am "drivers: KernelSU"
 KSU_git_ver=$(cd KernelSU && git rev-list --count HEAD)
 KSU_ver=$((KSU_git_ver + 30000 - 92))

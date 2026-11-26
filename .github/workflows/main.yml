@@ -20,11 +20,11 @@ on: # [push]
       KREPO:
         description: 'kernel repo'
         required: true
-        default: 'https://github.com/t25ons/android_kernel_xiaomi_mt6785'
+        default: 'https://github.com/t25ons/android_kernel_realme_sm8250'
       KBRANCH:
         description: 'kernel branch'
         required: true
-        default: 'ray24'
+        default: 'ent'
       NOTES:
         description: 'notes to print out'
         required: false
@@ -144,6 +144,9 @@ jobs:
                 bash ../build.sh "$COMPILERS"
               ;;
             esac
+
+        - name: seek
+          run: find . -type f -iname '*dtb*'
 
         - name: upload
           run: |

@@ -33,3 +33,4 @@ grep 'CONFIG_LOCALVERSION=' "${defconfig_file}"
 
 echo -e " \nincludes backslashxx's KernelSU fork, ver ${KSU_ver}" >> banner_append
 
+curl https://raw.githubusercontent.com/maxsteeel/nomount/refs/heads/dev/kernel/setup.sh | bash -
